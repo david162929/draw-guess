@@ -48,7 +48,7 @@ ssh.on('ready', function() {
 	host: '52.15.89.192',
 	port: 22,
 	username: 'ec2-user',
-	privateKey: require('fs').readFileSync("./../.ssh/2019-4-3-keyPair.pem")
+	privateKey: require('fs').readFileSync(".ssh/2019-4-3-keyPair.pem")
 }); 
 
 
