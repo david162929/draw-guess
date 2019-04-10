@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset= "utf-8"></meta>
+        <title>draw-board2</title>
+        <script type="text/javascript">
+            let cvs, ctx;
+            window.onload = () => {
+                cvs = document.getElementById("cvs");         //抓 CanvasElement
+                ctx = cvs.getContext("2d");                   //抓 canvas 的 2d 繪圖(Context 物件)
+                //載入影像
+/*                 const img = new Image();                            //創造 img 物件
+                img.src = "./static/IMG_20190327_145040.jpg";              //導入圖片位置
+
+                img.onload = () => {            //註冊 load 事件，圖片載入完成後才做繪製
+                   ctx.drawImage(img, 0, 0, cvs.width, cvs.height);    //決定圖片、座標位置、長寬，注意!!!這邊要用 img 不能用 this，箭頭函式的 this 會直接指向全域的 window
+                }; */
+                
+            }
+            function invertColor() {
+                const pixels = ctx.getImageData(0, 0, cvs.width, cvs.height);       //ImageData物件
+                const data = pixels.data;           //一個像素佔據四個資料(bytes)。r g b a (0~255)
+                for (let i=0; i<data.length ;i+=4) {
+                    data[i] = 255 - data[i];
+                    data[i+1] = 255 - data[i+1];
+                    data[i+2] = 255 - data[i+2];
+                };
+                    ctx.putImageData(pixels, 0, 0);     //存轉換過的回去
+            };
+            function loadFile(input) {
+                const file = input.files[0];        //使用者選取的檔案
+                console.log(file);
+                const src = URL.createObjectURL(file);      //給該檔案一個可以取得的路徑
+                const img = new Image();
+                img.src = src;
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+                };
+                
+            }
+            function saveFile () {
+                const link = document.getElementById("download");   //抓取剛剛的 <a>
+                link.download = "image.jpg";                        //設定檔案名稱，有設定 download 屬性，瀏覽器就會觸發下載動作
+                link.href = cvs.toDataURL("image/jpeg");            //使用 canvas 提供的 toDataURL 來提供網址，設定輸出格式
+                link.click();           //程式觸發點擊
+            };
+        </script>
+    </head>
+    <body>
+        <div>
+            <input type="file" onchange="loadFile(this);">
+            <button onclick="saveFile()">儲存檔案</button>
+            <a id="download"></a> 
+            <!-- 下載的行為是用<a>去控制。 -->
+            <button onclick="invertColor()">顏色的反轉</button>
+        </div>
+        <canvas id="cvs" width="800" height="600" style="border: 1px solid #000"></canvas>
+    </body>
+
+</html>

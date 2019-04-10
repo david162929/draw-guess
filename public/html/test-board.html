@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+    <head>
+        <meta charset= "utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>draw-board</title>
+		<link rel="stylesheet" href="static/css/normalize.css">
+		<style>
+			#cvs {
+				border: 1px solid #000;	
+				display: block;
+				margin: 0 auto;			
+			}
+		</style>
+    </head>
+    <body>
+        <h1>Wellcome to Draw-guess!</h1>
+        <h3>在線人數： <span id="onlineCount"></span></h2>
+        <div class="draw-board">
+			<canvas id="cvs" width="500" height="500"></canvas>
+		</div>
+	</body>
+    <script src="/static/js/draw-board.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/static/js/socket-frontend.js"></script>
+
+</html>

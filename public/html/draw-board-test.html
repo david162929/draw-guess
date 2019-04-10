@@ -1,0 +1,65 @@
+<meta charset='utf-8'>
+ 
+ <link rel="StyleSheet" type="text/css" href="reset.css">
+ <style>
+ canvas {
+ 	border: solid 1px gray;
+ }
+ </style>
+ <script src='http://code.jquery.com/jquery-1.8.2.min.js'></script>
+ <script>
+ $(document).ready(function() {
+ 	var canvas = $('#canvas');
+ 	//取得Context
+ 	var context = canvas[0].getContext('2d');
+ 	var drawing = false;
+ 	var queue = [];
+ 
+ 	canvas.bind('mousedown', function(e) {
+ 		if(!drawing) {
+ 			drawing = true;
+ 			var offset = $(e.currentTarget).offset()
+ 			var x = e.pageX - offset.left;
+ 			var y = e.pageY - offset.top;
+ 			drawLine(context,x,y,x,y);
+ 			queue.push([x,y]);
+ 		}
+ 	});
+ 	canvas.bind('mouseup', function(e) {
+ 		if(drawing) {
+ 			var old = queue.shift();
+ 			var offset = $(e.currentTarget).offset();
+ 			var x = e.pageX - offset.left;
+ 			var y = e.pageY - offset.top;
+ 			drawLine(context,old[0], old[1], x, y);
+ 			drawing = false;
+ 		}
+ 	});
+ 	canvas.bind('mousemove', function(e) {
+ 		if(drawing) {
+ 			var old = queue.shift();
+ 			var offset = $(e.currentTarget).offset();
+ 			var x = e.pageX - offset.left;
+ 			var y = e.pageY - offset.top;
+ 			drawLine(context,old[0],old[1],x,y);
+ 			queue.push([x,y]);
+ 		}
+ 	});
+ 	function drawLine(ctx,x,y,x1,y1) {
+ 		ctx.beginPath();
+ 		ctx.moveTo(x,y);
+ 		ctx.lineTo(x1,y1);
+ 		ctx.closePath();
+ 		ctx.stroke();
+ 	}
+ 	$('#toshow').click(function() {
+        //把canvas轉成DataURL
+ 		var url = $('#canvas')[0].toDataURL();
+ 		$('#show').prop('src', url);
+ 	});
+ });
+ </script>
+ 
+ 
+ <canvas id="canvas" width='320' height='240'></canvas>
+ <button id='toshow'>>>></button><img id='show'>
