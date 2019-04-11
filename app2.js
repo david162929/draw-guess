@@ -8,9 +8,9 @@ const fs = require('fs');
 
 const app = express();
 
-//Socket.io
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+/* --------------- Socket.io --------------- */
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 //server side socket.io
 let onlineCount = 0;
 io.on("connection", (socket) => {
@@ -35,27 +35,31 @@ io.on("connection", (socket) => {
 		io.emit("msg",msg);
 	});
 
-	socket.on("resImgData", (imgData) => {
-		console.log("2");
-		io.emit("resImgData", imgData);
+	//draw-board
+	socket.on("reqDataURL", () => {
+		socket.broadcast.emit("reqDataURL");
 	});
 
-	setTimeout(()=>{
-		console.log("go");
-		socket.emit("reqImgData");
-	}, 5000);
+	socket.on("resDataURL", (dataURL) => {
+		socket.broadcast.emit("resDataURL", dataURL);
+	});
+
+	socket.on("down-draw", (posX, posY) => {
+		socket.broadcast.emit("down-draw", posX, posY);
+	});
+
+	socket.on("move-draw", (posX, posY, lastPosX, lastPosY) => {
+		socket.broadcast.emit("move-draw", posX, posY, lastPosX, lastPosY);
+	});
+
+	socket.on("leave-draw", (posX, posY, lastPosX, lastPosY) => {
+		socket.broadcast.emit("leave-draw", posX, posY, lastPosX, lastPosY);
+	});
+
+	socket.on("enter-draw", (posX, posY, lastPosX, lastPosY) => {
+		socket.broadcast.emit("enter-draw", posX, posY, lastPosX, lastPosY);
+	});
 });
-
-/* io.on('connection', (socket) => {
-	console.log('a user connected');
-	socket.on('chat message', function(msg){
-		console.log('message: ' + msg);
-		io.emit('chat message', msg);
-	});
-	socket.on('disconnect', function(){
-		console.log('user disconnected');
-	});
-}); */
   
 
 //create TCP connection to MySQL over SSH by using mysql2 and ssh2 module
