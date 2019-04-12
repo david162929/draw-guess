@@ -15,7 +15,11 @@
     </head>
     <body>
         <h1>Wellcome to Draw-guess!</h1>
-        <h3>在線人數： <span id="onlineCount"></span></h2>
+		<h3>在線人數： <span id="onlineCount"></span></h3>
+		<h3>房號： <span id="roomId">all</span></h3>
+		<label>前往：</label>
+		<input type="text" id="roomIdNew">
+		<button id="joinRoom" onclick="joinRoom();">Go</button>
         <div class="draw-board">
 			<canvas id="cvs" width="500" height="500"></canvas>
 		</div>
@@ -24,5 +28,12 @@
     <script src="/socket.io/socket.io.js"></script>
 	<script src="/static/js/socket-frontend.js"></script>
 	<script src="/static/js/draw-board.js"></script>
+	<script>
+		function joinRoom () {
+			let roomId = document.getElementById("roomIdNew").value;
+			console.log(roomId);
+			socket.emit("join-room", roomId);
+		}
+	</script>
 
 </html>

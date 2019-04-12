@@ -14,6 +14,7 @@ const io = require('socket.io')(http);
 //server side socket.io
 let onlineCount = 0;
 io.on("connection", (socket) => {
+	let roomId;
 	onlineCount ++;
 	io.emit("online", onlineCount);
 	console.log("a user connected.");
@@ -35,32 +36,67 @@ io.on("connection", (socket) => {
 		io.emit("msg",msg);
 	});
 
-	//draw-board
+	socket.on("join-room", (id) => {
+		roomId = id;
+		socket.join(id, () => {
+			console.log(socket.rooms);
+			io.in(id).emit("join-succeed", Object.keys(socket.rooms));
+		});
+	});
+});
+
+/* class Client{
+	constructor(socket){
+		this.socket=socket;
+		this.data=null;
+		socket.on("reqDataURL", () => {
+			this.data=3;
+			socket.broadcast.emit("reqDataURL");
+		});
+	}
+} */
+
+let clients=[];
+//for draw-board
+const draw = io.of("/draw");
+draw.on("connection", (socket) => {
+	//clients.push(new Client(socket, clients.length));
+	console.log("draw connected.");
+	//console.log(roomId);
+	socket.join("room_1", () => {
+		console.log(socket.rooms);
+		socket.to("room_1").emit('join-succeed', "1成功加入房間 room_1");		//除了自己以外全部都送
+		draw.in('room_1').emit('join-succeed', "2成功加入房間 room_1");			//包含自己也送
+	});
 	socket.on("reqDataURL", () => {
 		socket.broadcast.emit("reqDataURL");
 	});
-
+	
 	socket.on("resDataURL", (dataURL) => {
 		socket.broadcast.emit("resDataURL", dataURL);
 	});
-
+	
 	socket.on("down-draw", (posX, posY) => {
 		socket.broadcast.emit("down-draw", posX, posY);
 	});
-
+	
 	socket.on("move-draw", (posX, posY, lastPosX, lastPosY) => {
 		socket.broadcast.emit("move-draw", posX, posY, lastPosX, lastPosY);
 	});
-
+	
 	socket.on("leave-draw", (posX, posY, lastPosX, lastPosY) => {
 		socket.broadcast.emit("leave-draw", posX, posY, lastPosX, lastPosY);
 	});
-
+	
 	socket.on("enter-draw", (posX, posY, lastPosX, lastPosY) => {
 		socket.broadcast.emit("enter-draw", posX, posY, lastPosX, lastPosY);
-	});
+	});	
 });
-  
+//draw.emit("ttt", "123");
+
+
+
+
 
 //create TCP connection to MySQL over SSH by using mysql2 and ssh2 module
 let sql;	//can't use const
@@ -147,6 +183,44 @@ app.get("/test-board", (req, res) => {
 	res.sendFile(__dirname + "/public/html/test-board.html");
 });
 
+app.get("/api/test", (req, res) => {
+	let roomId = req.query.roomId;
+	console.log("xxx");
+	//for draw-board
+	const draw2 = io.of("/draw");
+	draw2.on("connection", (socket) => {
+		console.log("draw connected.");
+		console.log(roomId);
+		draw.join(roomId, () => {
+			console.log(draw.rooms);
+			io.to(roomId).emit('a new user has joined the room');
+		});
+		socket.on("reqDataURL", () => {
+			socket.broadcast.emit("reqDataURL");
+		});
+		
+		socket.on("resDataURL", (dataURL) => {
+			socket.broadcast.emit("resDataURL", dataURL);
+		});
+		
+		socket.on("down-draw", (posX, posY) => {
+			socket.broadcast.emit("down-draw", posX, posY);
+		});
+		
+		socket.on("move-draw", (posX, posY, lastPosX, lastPosY) => {
+			socket.broadcast.emit("move-draw", posX, posY, lastPosX, lastPosY);
+		});
+		
+		socket.on("leave-draw", (posX, posY, lastPosX, lastPosY) => {
+			socket.broadcast.emit("leave-draw", posX, posY, lastPosX, lastPosY);
+		});
+		
+		socket.on("enter-draw", (posX, posY, lastPosX, lastPosY) => {
+			socket.broadcast.emit("enter-draw", posX, posY, lastPosX, lastPosY);
+		});
+	});
+	res.send(roomId);
+});
 
 /* ---------------Port--------------- */
 http.listen(4000, () => {

@@ -20,7 +20,7 @@ cvs.addEventListener("mousedown", () => {
     ctx.beginPath();
     ctx.arc(posX, posY, 1.2, 0, 2*Math.PI);
     ctx.fill();
-    socket.emit("down-draw", posX, posY);        
+    draw.emit("down-draw", posX, posY);        
 });
 
 cvs.addEventListener("mousemove", () => {
@@ -33,7 +33,7 @@ cvs.addEventListener("mousemove", () => {
         ctx.lineTo(posX, posY);
         ctx.closePath();
         ctx.stroke();
-        socket.emit("move-draw", posX, posY, lastPosX, lastPosY);            
+        draw.emit("move-draw", posX, posY, lastPosX, lastPosY);            
     }        
 
     lastPosX = posX;
@@ -51,7 +51,7 @@ cvs.addEventListener("mouseleave", () => {
         ctx.lineTo(posX, posY);
         ctx.closePath();
         ctx.stroke();
-        socket.emit("leave-draw", posX, posY, lastPosX, lastPosY);
+        draw.emit("leave-draw", posX, posY, lastPosX, lastPosY);
     }
 
     //重置
@@ -70,7 +70,7 @@ cvs.addEventListener("mouseenter", () => {
         ctx.lineTo(posX, posY);
         ctx.closePath();
         ctx.stroke();
-        socket.emit("enter-draw", posX, posY, lastPosX, lastPosY);
+        draw.emit("enter-draw", posX, posY, lastPosX, lastPosY);
     }
 });
 //全域事件
@@ -81,24 +81,24 @@ document.addEventListener("mousedown", () => {
     clickStatus = 1;
 }, true);
 document.addEventListener("mousemove", () => {
-    e = event || window.event;
+    const e = event || window.event;
     lastPosX = e.pageX - cvs.getBoundingClientRect().x || e.clientX + window.pageXOffset - cvs.getBoundingClientRect().x;
     lastPosY = e.pageY - cvs.getBoundingClientRect().y || e.clientY + window.pageYOffset - cvs.getBoundingClientRect().y;
 }, false);
 
 function changePosition() {
-    e = event || window.event;
+    const e = event || window.event;
     posX = e.pageX - cvs.getBoundingClientRect().x || e.clientX + window.pageXOffset - cvs.getBoundingClientRect().x;
     posY = e.pageY - cvs.getBoundingClientRect().y || e.clientY + window.pageYOffset - cvs.getBoundingClientRect().y;
 }
 
 /* ----- DataURL 提供與接收 ----- */
-socket.on("reqDataURL", () => {
+draw.on("reqDataURL", () => {
     let dataURL = cvs.toDataURL("image/png");
-    socket.emit("resDataURL", dataURL);
+    draw.emit("resDataURL", dataURL);
 }); 
 
-socket.on("resDataURL", (rDataURL) => {
+draw.on("resDataURL", (rDataURL) => {
     const img = new Image();
     img.src = rDataURL;
     img.onload = () => {
@@ -108,14 +108,14 @@ socket.on("resDataURL", (rDataURL) => {
 
 
 /* ----- 接收同步的繪畫動作 ----- */
-socket.on("down-draw", (rposX, rposY) => {
+draw.on("down-draw", (rposX, rposY) => {
     //畫點
     ctx.beginPath();
     ctx.arc(rposX, rposY, 1.2, 0, 2*Math.PI);
     ctx.fill();
 });
 
-socket.on("move-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
+draw.on("move-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
@@ -124,7 +124,7 @@ socket.on("move-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.stroke();
 });
 
-socket.on("leave-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
+draw.on("leave-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
@@ -133,7 +133,7 @@ socket.on("leave-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.stroke();
 });
 
-socket.on("enter-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
+draw.on("enter-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
