@@ -10,67 +10,76 @@ let clickStatus = 0;
 
 //畫布事件
 cvs.addEventListener("mousedown", () => {
-    changePosition();
+    if (gameStatus !== "freeze") {
+        changePosition();
 
-    if (lastPosX === "init") {
-        lastPosX = posX;
-        lastPosY = posY;
+        if (lastPosX === "init") {
+            lastPosX = posX;
+            lastPosY = posY;
+        }
+        //畫點
+        ctx.beginPath();
+        ctx.arc(posX, posY, 1.2, 0, 2*Math.PI);
+        ctx.fill();
+        draw.emit("down-draw", roomId, posX, posY);
     }
-    //畫點
-    ctx.beginPath();
-    ctx.arc(posX, posY, 1.2, 0, 2*Math.PI);
-    ctx.fill();
-    draw.emit("down-draw", posX, posY);        
+      
 });
 
 cvs.addEventListener("mousemove", () => {
-    changePosition();
-    if (clickStatus === 1) {
-        //開畫
-        ctx.lineWidth = 2;			//改粗細
-        ctx.beginPath();
-        ctx.moveTo(lastPosX, lastPosY);
-        ctx.lineTo(posX, posY);
-        ctx.closePath();
-        ctx.stroke();
-        draw.emit("move-draw", posX, posY, lastPosX, lastPosY);            
-    }        
-
-    lastPosX = posX;
-    lastPosY = posY;
+    if (gameStatus !== "freeze") {
+        changePosition();
+        if (clickStatus === 1) {
+            //開畫
+            ctx.lineWidth = 2;			//改粗細
+            ctx.beginPath();
+            ctx.moveTo(lastPosX, lastPosY);
+            ctx.lineTo(posX, posY);
+            ctx.closePath();
+            ctx.stroke();
+            draw.emit("move-draw", roomId, posX, posY, lastPosX, lastPosY);            
+        }        
+    
+        lastPosX = posX;
+        lastPosY = posY;
+    }
 });
 
 cvs.addEventListener("mouseleave", () => {
-    if (clickStatus === 1) {
-        changePosition();
-
-        //開畫
-        ctx.lineWidth = 2;			//改粗細
-        ctx.beginPath();
-        ctx.moveTo(lastPosX, lastPosY);
-        ctx.lineTo(posX, posY);
-        ctx.closePath();
-        ctx.stroke();
-        draw.emit("leave-draw", posX, posY, lastPosX, lastPosY);
+    if (gameStatus !== "freeze") {
+        if (clickStatus === 1) {
+            changePosition();
+    
+            //開畫
+            ctx.lineWidth = 2;			//改粗細
+            ctx.beginPath();
+            ctx.moveTo(lastPosX, lastPosY);
+            ctx.lineTo(posX, posY);
+            ctx.closePath();
+            ctx.stroke();
+            draw.emit("leave-draw", roomId, posX, posY, lastPosX, lastPosY);
+        }
+    
+        //重置
+        lastPosX = "init";
+        lastPosY = "init";
     }
-
-    //重置
-    lastPosX = "init";
-    lastPosY = "init";
 });
 
 cvs.addEventListener("mouseenter", () => {
-    if (clickStatus === 1) {
-        changePosition();
-
-        //開畫
-        ctx.lineWidth = 2;			//改粗細
-        ctx.beginPath();
-        ctx.moveTo(lastPosX, lastPosY);
-        ctx.lineTo(posX, posY);
-        ctx.closePath();
-        ctx.stroke();
-        draw.emit("enter-draw", posX, posY, lastPosX, lastPosY);
+    if (gameStatus !== "freeze") {
+        if (clickStatus === 1) {
+            changePosition();
+    
+            //開畫
+            ctx.lineWidth = 2;			//改粗細
+            ctx.beginPath();
+            ctx.moveTo(lastPosX, lastPosY);
+            ctx.lineTo(posX, posY);
+            ctx.closePath();
+            ctx.stroke();
+            draw.emit("enter-draw", roomId, posX, posY, lastPosX, lastPosY);
+        }
     }
 });
 //全域事件
@@ -82,20 +91,20 @@ document.addEventListener("mousedown", () => {
 }, true);
 document.addEventListener("mousemove", () => {
     const e = event || window.event;
-    lastPosX = e.pageX - cvs.getBoundingClientRect().x || e.clientX + window.pageXOffset - cvs.getBoundingClientRect().x;
-    lastPosY = e.pageY - cvs.getBoundingClientRect().y || e.clientY + window.pageYOffset - cvs.getBoundingClientRect().y;
+    lastPosX = e.pageX - cvs.getBoundingClientRect().x - window.pageXOffset || e.clientX - cvs.getBoundingClientRect().x;
+    lastPosY = e.pageY - cvs.getBoundingClientRect().y - window.pageYOffset || e.clientY - cvs.getBoundingClientRect().y;
 }, false);
 
 function changePosition() {
     const e = event || window.event;
-    posX = e.pageX - cvs.getBoundingClientRect().x || e.clientX + window.pageXOffset - cvs.getBoundingClientRect().x;
-    posY = e.pageY - cvs.getBoundingClientRect().y || e.clientY + window.pageYOffset - cvs.getBoundingClientRect().y;
+    posX = e.pageX - cvs.getBoundingClientRect().x - window.pageXOffset || e.clientX - cvs.getBoundingClientRect().x;
+    posY = e.pageY - cvs.getBoundingClientRect().y - window.pageYOffset || e.clientY - cvs.getBoundingClientRect().y;
 }
 
 /* ----- DataURL 提供與接收 ----- */
 draw.on("reqDataURL", () => {
     let dataURL = cvs.toDataURL("image/png");
-    draw.emit("resDataURL", dataURL);
+    draw.emit("resDataURL", roomId, dataURL);
 }); 
 
 draw.on("resDataURL", (rDataURL) => {
@@ -105,7 +114,6 @@ draw.on("resDataURL", (rDataURL) => {
         ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
     };
 });
-
 
 /* ----- 接收同步的繪畫動作 ----- */
 draw.on("down-draw", (rposX, rposY) => {
@@ -142,4 +150,7 @@ draw.on("enter-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
     ctx.stroke();
 });
 
-
+/* ----- 清空畫布 ----- */
+draw.on("clearBoard", () => {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);         //清空畫面
+});

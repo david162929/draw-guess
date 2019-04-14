@@ -9,31 +9,122 @@
 			#cvs {
 				border: 1px solid #000;	
 				display: block;
-				margin: 0 auto;			
+				margin: 20px auto;			
+			}
+			.container {
+				border: 1px solid #000;
+				width: 80%;
+				margin: 20px auto;
+			}
+			#chat-content {
+				border-bottom: 1px solid #000;
+				height: 200px;
+				overflow: auto;
+			}
+			#chat-input {
+				width: 80%;
+				margin: 5px auto;
+				margin-left: 5%;
+			}
+			.chat-user {
+				font-size: 18pt;
+				font-weight: bold;
+				color: slateblue;
+			}
+			.chat-message {
+				font-size: 14pt;
+				color: rgb(109, 109, 109);
 			}
 		</style>
     </head>
     <body>
         <h1>Wellcome to Draw-guess!</h1>
-		<h3>在線人數： <span id="onlineCount"></span></h3>
-		<h3>房號： <span id="roomId">all</span></h3>
+		<h3>網站在線人數： <span id="onlineCount"></span></h3>
+		<h3>房間在線人數： <span id="onlineCount-room"></span></h3>
+		<h3>玩家名稱： <span id="user-name">訪客</span></h3>
+		<label>更改：</label>
+		<input type="text" id="user-name-input">
+		<button id="changeUserName" onclick="changeUserName();">確定</button>
+		<h3>房號： <span id="roomId">room_1</span></h3>
 		<label>前往：</label>
 		<input type="text" id="roomIdNew">
 		<button id="joinRoom" onclick="joinRoom();">Go</button>
+		<div id="topic"></div>
+		<div id="game-start"></div>
         <div class="draw-board">
 			<canvas id="cvs" width="500" height="500"></canvas>
 		</div>
+		<div class="container">
+			<div class="chatBox">
+				<div id="chat-content">
+
+				</div>
+				<div id="send-content">
+					<input type="text" name="msg" id="chat-input" placeholder="J個題目的答案是?">
+					<button type="submit" id="chat-button" onclick="sendMessage();">送出</button>
+				</div>
+			</div>
+		</div>
+
 	</body>
 
     <script src="/socket.io/socket.io.js"></script>
 	<script src="/static/js/socket-frontend.js"></script>
 	<script src="/static/js/draw-board.js"></script>
 	<script>
-		function joinRoom () {
-			let roomId = document.getElementById("roomIdNew").value;
-			console.log(roomId);
-			socket.emit("join-room", roomId);
+		//Press Enter to send
+		const chatInput = document.getElementById("chat-input");
+		chatInput.addEventListener("keydown", (event) => {
+			const keyName = event.key;
+			if(keyName === "Enter") {
+				sendMessage();
+			}
+		})
+
+		//View message
+		function appendMessage(tagId, userName, msg) {
+			const div = document.createElement("div");
+			const spanName = document.createElement("span");
+			spanName.className = "chat-user";
+			const spanMessage = document.createElement("span");
+			spanMessage.className = "chat-message";
+			const userText = document.createTextNode(userName + ": ");
+			const msgText = document.createTextNode(msg);
+
+			spanName.appendChild(userText);
+			spanMessage.appendChild(msgText);
+			div.appendChild(spanName);
+			div.appendChild(spanMessage);
+			document.getElementById(tagId).appendChild(div);
 		}
+
+		function changeUserName() {
+			userName = document.getElementById("user-name-input").value;
+			document.getElementById("user-name").innerHTML = userName;			
+		}
+
+		function joinRoom () {
+			lastRoomId = roomId;
+			roomId = document.getElementById("roomIdNew").value;
+			document.getElementById("roomId").innerHTML = roomId;
+			console.log(lastRoomId, roomId);
+			draw.emit("join-room", lastRoomId, roomId);
+		}
+		function sendMessage () {
+			let msg = document.getElementById("chat-input").value;
+			document.getElementById("chat-input").value = "";
+			console.log(msg);
+			if (gameStatus === "freeze") {
+				draw.emit("send-answer-message", roomId, userName, msg);
+			}
+			else {
+				draw.emit("send-chat-message", roomId, userName, msg);
+			}
+		}
+
+
+
+
 	</script>
 
 </html>
