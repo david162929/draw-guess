@@ -55,21 +55,25 @@ io.on("connection", (socket) => {
 } */
 
 //let clients=[];
-const gameDetail = {
+/* const gameDetail = {
 	orderNum: 0,//計算當前回合玩家
 	correctClients: [],
 	correct: 0
-};
+}; */
 
 const rooms = [
 	{
 		roomId: "room_1",
 		clients: [],
-		gameDetail: gameDetail
+		gameDetail: {
+			orderNum: 0,
+			correctClients: [],
+			correct: 0
+		}
 	}
 ];
 
-const topic = ["蘋果", "香蕉", "鳳梨"];
+const topic = ["蘋果", "香蕉", "鳳梨", "芭樂"];
 
 
 //for draw-board
@@ -164,7 +168,11 @@ draw.on("connection", (socket) => {
 					rooms.push({				//寫入房間
 						roomId: roomId,
 						clients: [],
-						gameDetail: gameDetail
+						gameDetail: {
+							orderNum: 0,
+							correctClients: [],
+							correct: 0
+						}
 					});
 					findout = rooms.length-1;
 					roomOwner = 1;					
@@ -189,7 +197,7 @@ draw.on("connection", (socket) => {
 								for (let j=0; j<rooms[i].clients.length; j++) {			//搜索整個 cliens
 									if (rooms[i].clients[j] === socket.id) {
 										rooms[i].clients.splice(j, 1);			//刪除搜到的那項
-										socket.to(lastRoomId).emit("leave-succeed", rooms[i].clients.length);
+										socket.to(roomId).emit("leave-succeed", rooms[i].clients.length);
 									}					
 								}
 							}
@@ -217,11 +225,12 @@ draw.on("connection", (socket) => {
 	socket.on("send-answer-message", (roomId, userName, msg) => {
 		for (let i=0; i<rooms.length; i++) {		//搜索整個 rooms
 			if (rooms[i].roomId === roomId) {
-				let itemNum = rooms[i].gameDetail.orderNum % rooms[i].clients.length;
+				let itemNum = rooms[i].gameDetail.orderNum % topic.length;
 				if (msg === topic[itemNum]) {
 					let tmp = 0;
-					for (let i=0; i<rooms[i].gameDetail.correctClients.length; i++) {
-						if (rooms[i].gameDetail.correctClients[i] === socket.id) {
+					//檢查是否重複
+					for (let x=0; x<rooms[i].gameDetail.correctClients.length; x++) {
+						if (rooms[i].gameDetail.correctClients[x] === socket.id) {
 							tmp = 1;
 						}
 					}
@@ -234,7 +243,7 @@ draw.on("connection", (socket) => {
 						socket.emit("send-chat-message", userName, "猜對了！答案是： " + topic[itemNum]);
 						rooms[i].gameDetail.correct += 1;
 						if (rooms[i].gameDetail.correct === rooms[i].clients.length-1) {
-							console.log(rooms[i].gameDetail.correct,rooms[i].clients.length-1);
+							console.log("rooms["+i+"].gameDetail.correct："+rooms[i].gameDetail.correct, "rooms["+i+"].clients.length-1："+(rooms[i].clients.length-1));
 							draw.in(roomId).emit("next-turn");
 							
 							//輪下一位
@@ -262,7 +271,7 @@ draw.on("connection", (socket) => {
 				rooms[i].gameDetail.correct = 0;
 				
 				//計算當前 topic
-				let itemNum = rooms[i].gameDetail.orderNum % rooms[i].clients.length;
+				let itemNum = rooms[i].gameDetail.orderNum % topic.length;
 				socket.to(roomId).emit("freeze");		//其他玩家凍結
 				socket.emit("game-run", topic[itemNum]);		//當前玩家開始
 				draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面

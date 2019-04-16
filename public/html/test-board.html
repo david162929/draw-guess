@@ -96,6 +96,10 @@
 			div.appendChild(spanName);
 			div.appendChild(spanMessage);
 			document.getElementById(tagId).appendChild(div);
+
+			//保持滾動在底部
+			const chatContent = document.getElementById("chat-content");
+			chatContent.scrollTop = chatContent.scrollHeight;
 		}
 
 		function changeUserName() {
@@ -115,9 +119,11 @@
 			document.getElementById("chat-input").value = "";
 			console.log(msg);
 			if (gameStatus === "freeze") {
+				console.log("freeze");
 				draw.emit("send-answer-message", roomId, userName, msg);
 			}
 			else {
+				console.log("other");
 				draw.emit("send-chat-message", roomId, userName, msg);
 			}
 		}
