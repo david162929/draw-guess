@@ -55,21 +55,23 @@ io.on("connection", (socket) => {
 } */
 
 //let clients=[];
-/* const gameDetail = {
-	orderNum: 0,//計算當前回合玩家
-	correctClients: [],
-	correct: 0
-}; */
+
+
+//Global Object
+class GameDetail {
+	constructor () {
+		this.orderNum = 0;
+		this.correctClients = [];
+		this.correct = 0;
+		this.gameStatus = "wait";
+	}
+}
 
 const rooms = [
 	{
 		roomId: "room_1",
 		clients: [],
-		gameDetail: {
-			orderNum: 0,
-			correctClients: [],
-			correct: 0
-		}
+		gameDetail: new GameDetail()
 	}
 ];
 
@@ -168,21 +170,18 @@ draw.on("connection", (socket) => {
 					rooms.push({				//寫入房間
 						roomId: roomId,
 						clients: [],
-						gameDetail: {
-							orderNum: 0,
-							correctClients: [],
-							correct: 0
-						}
+						gameDetail: new GameDetail()
 					});
 					findout = rooms.length-1;
-					roomOwner = 1;					
-				}				
+					roomOwner = 1;
+				}
 
 				rooms[findout].clients.push(socket.id);		//寫入使用者id
 
 				draw.to(socket.id).emit("room-owner-status", roomOwner);
 				draw.in(roomId).emit("join-succeed", rooms[findout].clients.length);
 				socket.emit("toGetUpdateDataURL");				//等於 draw.to(socket.id).emit
+				socket.emit("send-gameStatus", rooms[findout].gameDetail.gameStatus);
 				console.log(rooms);
 
 				socket.on("disconnect", () => {
@@ -215,10 +214,16 @@ draw.on("connection", (socket) => {
 	});
 
 	//game start
-	socket.on("game-start", (roomId) => {
+	socket.on("game-start", (roomId, userName) => {
+		for (let i=0; i<rooms.length; i++) {		//搜索整個 rooms
+			if (rooms[i].roomId === roomId) {
+				rooms[i].gameDetail.gameStatus = "start";
+			}
+		}
 		socket.to(roomId).emit("freeze");		//其他玩家凍結
 		socket.emit("game-run", topic[0]);		//當前玩家開始
 		draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面
+		draw.in(roomId).emit("updateCurrentUser", userName);
 	});
 
 	//answer message
@@ -263,7 +268,7 @@ draw.on("connection", (socket) => {
 	});
 
 	//next turn
-	socket.on("new-round", (roomId) => {
+	socket.on("new-round", (roomId, userName) => {
 		//重置
 		for (let i=0; i<rooms.length; i++) {		//搜索整個 rooms
 			if (rooms[i].roomId === roomId) {
@@ -275,8 +280,16 @@ draw.on("connection", (socket) => {
 				socket.to(roomId).emit("freeze");		//其他玩家凍結
 				socket.emit("game-run", topic[itemNum]);		//當前玩家開始
 				draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面
+				draw.in(roomId).emit("updateCurrentUser", userName);
 			}
 		}
+	});
+
+	//中途加入遊戲
+	socket.on("join-after-game-start", () => {
+		socket.emit("clearBoard");		//該玩家清空畫面
+		socket.emit("freeze");			//該玩家凍結
+		//socket.emit("updateCurrentUser");
 	});
 	
 });

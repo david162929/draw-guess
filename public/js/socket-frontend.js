@@ -58,7 +58,7 @@ draw.on("room-owner-status", (roomOwnerResult) => {
         startButton.addEventListener("click", () => {
             gameStatus = "start";
             startButton.style = "display: none;";
-            draw.emit("game-start", roomId);
+            draw.emit("game-start", roomId, userName);
         });
     }
 });
@@ -99,5 +99,16 @@ draw.on("next-turn", () => {
 
 draw.on("your-turn", () => {
     console.log("your-turn");
-    draw.emit("new-round", roomId);
+    draw.emit("new-round", roomId, userName);
+});
+
+draw.on("updateCurrentUser", (usr) => {
+    document.getElementById("userCurrentTurn").innerHTML = usr;
+});
+
+draw.on("send-gameStatus", (gStatus) => {
+    gameStatus = gStatus;
+    if (gameStatus === "start") {
+        draw.emit("join-after-game-start");
+    }
 });

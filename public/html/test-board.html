@@ -49,6 +49,7 @@
 		<label>前往：</label>
 		<input type="text" id="roomIdNew">
 		<button id="joinRoom" onclick="joinRoom();">Go</button>
+		<h3>當前回合玩家： <span id="userCurrentTurn">等待中</span></h3>
 		<div id="topic"></div>
 		<div id="game-start"></div>
         <div class="draw-board">
@@ -76,7 +77,7 @@
 		const chatInput = document.getElementById("chat-input");
 		chatInput.addEventListener("keydown", (event) => {
 			const keyName = event.key;
-			if(keyName === "Enter") {
+			if(keyName === "Enter" && document.getElementById("chat-input").value !== "") {
 				sendMessage();
 			}
 		})
