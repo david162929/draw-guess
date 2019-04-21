@@ -5,7 +5,7 @@ let roomId = "room_1";
 let lastRoomId = "room_1";
 let userName = "guest";
 let gameStatus = "wait";
-let roomOwner = 0;
+let roomOwner;
 
 socket.on("connect", () => {
     console.log("connected.");
@@ -46,7 +46,7 @@ draw.on("room-owner-status", (roomOwnerResult) => {
     //設定是否為創房者的狀態
     roomOwner = roomOwnerResult;
     console.log("roomOwner = " + roomOwner);
-    if (roomOwner === 1) {
+    if (roomOwner === true) {
         const button = document.createElement("button");
         button.id = "game-start-button";
         const buttonText = document.createTextNode("遊戲開始");
