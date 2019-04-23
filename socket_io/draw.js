@@ -1,8 +1,13 @@
 //for draw-board
-function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
+function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDetail, Ranking) {
     const draw = io.of("/draw");
     draw.on("connection", (socket) => {
         console.log("draw connected.");
+
+        //change user id
+        socket.on("change-user-id", (userName) => {
+            clients[socket.id].userId = userName;
+        });
 
         socket.join("room_1", () => {
             console.log(socket.rooms, socket.id);
@@ -13,6 +18,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
             console.log(rooms);
             //socket.to("room_1").emit('join-succeed', "1成功加入房間 room_1");		//除了自己以外全部都送
             draw.in('room_1').emit('join-succeed', rooms["room_1"].clients.length);			//包含自己也送
+            socket.emit("send-user-id", clients[socket.id].userId);         //送出別名
         });
         
         socket.on("reqDataURL", (roomId) => {
@@ -24,19 +30,31 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
         });
         
         socket.on("down-draw", (roomId, posX, posY) => {
-            socket.to(roomId).emit("down-draw", posX, posY);
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                socket.to(roomId).emit("down-draw", posX, posY);
+            }
         });
         
         socket.on("move-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            socket.to(roomId).emit("move-draw", posX, posY, lastPosX, lastPosY);
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                socket.to(roomId).emit("move-draw", posX, posY, lastPosX, lastPosY);
+            }
         });
         
         socket.on("leave-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            socket.to(roomId).emit("leave-draw", posX, posY, lastPosX, lastPosY);
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                socket.to(roomId).emit("leave-draw", posX, posY, lastPosX, lastPosY);
+            }
         });
         
         socket.on("enter-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            socket.to(roomId).emit("enter-draw", posX, posY, lastPosX, lastPosY);
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                socket.to(roomId).emit("enter-draw", posX, posY, lastPosX, lastPosY);
+            }
         });	
 
         //join room
@@ -44,9 +62,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
             socket.leave(lastRoomId, () => {
                 console.log("離開成功 上一個 room: " + lastRoomId + "加入的 room: " + roomId);
                 clients[socket.id].room = "";     //清空房間資訊
-                console.log(clients);
                 socket.emit("clearBoard");
-
                 
                 //remove user id in last room
                 if (rooms[lastRoomId].clients.length === 1 && lastRoomId !== "room_1") {
@@ -55,6 +71,10 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
                 else {
                     let clientIndex = findClient(socket.id, rooms[lastRoomId]);
                     rooms[lastRoomId].clients.splice(clientIndex, 1);           //刪除搜到的那項
+
+                    let rankingIndex = findRanking(socket.id, rooms[lastRoomId]);
+                    rooms[lastRoomId].rankingList.splice(rankingIndex, 1);      //刪除搜到的那項
+
                     socket.to(lastRoomId).emit("leave-succeed", rooms[lastRoomId].clients.length);
                 }
 
@@ -68,13 +88,12 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
                     let roomOwner = false;
                     if (rooms[roomId]) {
                         console.log("room 存在");
+                        rooms[roomId].rankingList.push(new Ranking(socket.id, clients[socket.id].userId));         //寫入排行榜
                     }
                     else {
-                        rooms[roomId] = {				//寫入房間
-                            roomId: roomId,
-                            clients: [],
-                            gameDetail: new GameDetail()
-                        };
+                        rooms[roomId] = new RoomDetail(roomId);         //寫入房間
+                        rooms[roomId].gameDetail.currentDraw = socket.id;       //設定第一回合者
+                        rooms[roomId].rankingList.push(new Ranking(socket.id, clients[socket.id].userId));         //寫入排行榜
                         roomOwner = true;
                     }
 
@@ -85,6 +104,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
                     socket.emit("toGetUpdateDataURL");				//等於 draw.to(socket.id).emit
                     socket.emit("send-gameStatus", rooms[roomId].gameDetail.gameStatus);
                     console.log(rooms);
+                    console.log(rooms[roomId].rankingList);
                 });
             });
         });
@@ -95,15 +115,47 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
         });
 
         //game start
+        let drawTimerId;
         socket.on("game-start", (roomId, userName) => {
-            rooms[roomId].gameDetail.gameStatus = "start";
+            //驗證使用者
+            if (socket.id === rooms[roomId].gameDetail.currentDraw) {
+                rooms[roomId].gameDetail.gameStatus = "start";
+                rooms[roomId].gameDetail.currentDraw = socket.id;
+    
+                //重置
+                rooms[roomId].gameDetail.correctClients = [];
+                rooms[roomId].gameDetail.correct = 0;
+    
+                //計算當前 topic
+                let itemNum = rooms[roomId].gameDetail.orderNum % topic.length;
+    
+                socket.to(roomId).emit("freeze");		//其他玩家凍結
+                socket.emit("game-run", topic[itemNum]);		//當前玩家開始
+                draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面
+                draw.in(roomId).emit("updateCurrentUser", userName);
+    
+                //開始計時
+                drawTimerId = setTimeout(() => {
+                    if (rooms[roomId].gameDetail.correct === 0) {
+                        rooms[roomId].gameDetail.gameStatus = "no-one-hit";
+                    }
+                    else if (rooms[roomId].gameDetail.correct === rooms[roomId].clients) {
+                        rooms[roomId].gameDetail.gameStatus = "all-correct";
+                    }
+                    else {
+                        rooms[roomId].gameDetail.gameStatus = "part-correct";
+                    }
+                    draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, userName, topic[itemNum]);
+                    middlePhaseTimer(draw, rooms, roomId);
 
-            socket.to(roomId).emit("freeze");		//其他玩家凍結
-            socket.emit("game-run", topic[0]);		//當前玩家開始
-            draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面
-            draw.in(roomId).emit("updateCurrentUser", userName);
+
+                }, 10000);
+                
+                console.log(rooms);
+            }         
+
         });
-
+        
         //answer message
         socket.on("send-answer-message", (roomId, userName, msg) => {
             let itemNum = rooms[roomId].gameDetail.orderNum % topic.length;         //計算當前題目是題目組的第幾個
@@ -119,20 +171,42 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
                     socket.emit("send-chat-message", userName, "你已經猜對了。");
                 }
                 else {
+                    //找 rankingList
+                    let rankingIndex = findRanking(socket.id, rooms[roomId]);
+                     
+                    if (rankingIndex === false) throw Error("Do not find socketId in rankingList.");
+
+                    //依照答對順序加分
+                    if (rooms[roomId].gameDetail.correct > 2) {
+                        rooms[roomId].rankingList[rankingIndex].score += 2;
+                    }
+                    else {
+                        rooms[roomId].rankingList[rankingIndex].score += 5-rooms[roomId].gameDetail.correct;
+                    }
+                    let rankingIndex2 = findRanking(rooms[roomId].gameDetail.currentDraw, rooms[roomId]);
+                    rooms[roomId].rankingList[rankingIndex2].score += 1;
+                    rooms[roomId].rankingList.sort((a, b) => {return b.score-a.score;});        //大到小排序
+
+                    draw.in(roomId).emit("rankingList-update", rooms[roomId].rankingList);
+                    console.log(rooms[roomId].rankingList);
+
+
                     rooms[roomId].gameDetail.correctClients.push(socket.id);
                     socket.to(roomId).emit("send-chat-message", userName, "猜對了！");
                     socket.emit("send-chat-message", userName, "猜對了！答案是： " + topic[itemNum]);
                     rooms[roomId].gameDetail.correct += 1;
                     if (rooms[roomId].gameDetail.correct === rooms[roomId].clients.length-1) {
-                        console.log("rooms["+roomId+"].gameDetail.correct："+rooms[roomId].gameDetail.correct, "rooms["+roomId+"].clients.length-1："+(rooms[roomId].clients.length-1));
-                        draw.in(roomId).emit("next-turn");
                         
-                        //輪下一位
-                        rooms[roomId].gameDetail.orderNum += 1;
-                        let userNum = rooms[roomId].gameDetail.orderNum % rooms[roomId].clients.length;
-                        let socketId = rooms[roomId].clients[userNum];
-                        draw.to(socketId).emit("your-turn");
+                        //進入到間隔 phase
+                        rooms[roomId].gameDetail.gameStatus = "all-correct";
+                        draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, rooms[roomId].rankingList[rankingIndex2].userId, topic[itemNum]);
+                        clearTimeout(drawTimerId);        //清掉繪圖計時
+
+                        middlePhaseTimer(draw, rooms, roomId);
                     }
+
+
+
                 }
             }
             else {
@@ -140,7 +214,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
             }
         });
 
-        //next turn
+/*         //next turn
         socket.on("new-round", (roomId, userName) => {
             //重置
             rooms[roomId].gameDetail.correctClients = [];
@@ -152,7 +226,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
             socket.emit("game-run", topic[itemNum]);		//當前玩家開始
             draw.in(roomId).emit("clearBoard");		//所有玩家清空畫面
             draw.in(roomId).emit("updateCurrentUser", userName);
-        });
+        }); */
 
        //中途加入遊戲
         socket.on("join-after-game-start", () => {
@@ -175,6 +249,9 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail) {
                 let clientIndex = findClient(socket.id, rooms[disconRoom]);
                 rooms[disconRoom].clients.splice(clientIndex, 1);       //刪除搜到的那項
                 delete clients[socket.id];              //刪除 clients 中的使用者
+
+                let rankingIndex = findRanking(socket.id, rooms[disconRoom]);
+                rooms[disconRoom].rankingList.splice(rankingIndex, 1);      //刪除搜到的那項
                 socket.to(disconRoom).emit("leave-succeed", rooms[disconRoom].clients.length);
             }
             console.log(clients);
@@ -195,7 +272,36 @@ function findClient (targetClientId, targetRoomObj) {
     }
 }
 
+function findRanking (targetClientId, targetRoomObj) {
+    for (let i=0; i<targetRoomObj.rankingList.length ; i++) {
+        if (targetRoomObj.rankingList[i].socketId === targetClientId) {
+            return i;
+        }
+        else if (i === targetRoomObj.rankingList.length-1) {
+            return false;
+        }
+    }
+}
 
+function middlePhaseTimer (draw, rooms, roomId) {
+    setTimeout(() => {
+        draw.in(roomId).emit("next-turn");
+                        
+        //輪下一位
+        rooms[roomId].gameDetail.orderNum += 1;
+        let userNum = findClient(rooms[roomId].gameDetail.currentDraw, rooms[roomId]);
+        userNum += 1;                            
+        let socketId = rooms[roomId].clients[userNum] || rooms[roomId].clients[0];
+        rooms[roomId].gameDetail.currentDraw = socketId;
+        draw.to(socketId).emit("your-turn");
+        console.log(userNum, socketId);
+        console.log(rooms);
+    }, 5000);
+}
+
+// function timerRun (socket, io, roomId) {
+//     io.in(roomId).emit("time-out");
+// }
 
 
 module.exports = drawSocket;

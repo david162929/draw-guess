@@ -9,7 +9,7 @@
 			#cvs {
 				border: 1px solid #000;	
 				display: block;
-				margin: 20px auto;			
+				margin: 20px auto;		
 			}
 			.container {
 				border: 1px solid #000;
@@ -35,6 +35,45 @@
 				font-size: 14pt;
 				color: rgb(109, 109, 109);
 			}
+			.draw-board {
+				position: relative;
+			}
+			#outer-timer {
+				width: 450px;
+				height: 10px;
+				border: 1px solid silver;
+				position: relative;
+				margin: 5px auto 5px auto;
+			}
+			.timer1 {
+				width: 450px;
+				height: 10px;
+				position: relative;
+				background-color: lightskyblue;
+				margin: 0 auto;
+				z-index: 1;
+			}
+			.timer2 {
+				width: 0px;
+				height: 10px;
+				position: relative;
+				background-color: lightcoral;
+				margin-left: 0;
+				z-index: 1;
+				transition-property: width background-color;
+				transition-duration:10s;
+				transition-timing-function: linear;
+				-moz-transition-property: width background-color;
+				-moz-transition-duration:10s;
+				-moz-transition-timing-function: linear;
+				-webkit-transition-property: width background-color;
+				-webkit-transition-duration:10s;
+				-webkit-transition-timing-function: linear;
+				-o-transition-property: width background-color;
+				-o-transition-duration:10s;
+				-o-transition-timing-function: linear;
+			}
+			
 		</style>
     </head>
     <body>
@@ -50,10 +89,12 @@
 		<input type="text" id="roomIdNew">
 		<button id="joinRoom" onclick="joinRoom();">Go</button>
 		<h3>當前回合玩家： <span id="userCurrentTurn">等待中</span></h3>
+		<div id="ranking-list"></div>
 		<div id="topic"></div>
 		<div id="game-start"></div>
         <div class="draw-board">
 			<canvas id="cvs" width="500" height="500"></canvas>
+			<div id="outer-timer"><div id="timer" class="timer1"></div></div>
 		</div>
 		<div class="container">
 			<div class="chatBox">
@@ -62,7 +103,7 @@
 				</div>
 				<div id="send-content">
 					<input type="text" name="msg" id="chat-input" placeholder="J個題目的答案是?">
-					<button type="submit" id="chat-button" onclick="sendMessage();">送出</button>
+					<!-- <button type="submit" id="chat-button" onclick="sendMessage();">送出</button> -->
 				</div>
 			</div>
 		</div>
@@ -105,7 +146,8 @@
 
 		function changeUserName() {
 			userName = document.getElementById("user-name-input").value;
-			document.getElementById("user-name").innerHTML = userName;			
+			document.getElementById("user-name").innerHTML = userName;
+			draw.emit("change-user-id", userName);			
 		}
 
 		function joinRoom () {
@@ -129,8 +171,17 @@
 			}
 		}
 
-
-
+		function go () {
+			let timer = document.getElementById("timer");
+			if (timer.className === "timer1") {
+				timer.className = "timer2";
+			}
+			else {
+				timer.className = "timer1";
+			}
+		}
+		window.setTimeout(() => {go();}, 0);
+		//window.setInterval(go, 11000);
 
 	</script>
 

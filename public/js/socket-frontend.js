@@ -3,7 +3,7 @@ const draw = io.connect("/draw");
 
 let roomId = "room_1";
 let lastRoomId = "room_1";
-let userName = "guest";
+let userName = "";
 let gameStatus = "wait";
 let roomOwner;
 
@@ -73,10 +73,19 @@ draw.on("toGetUpdateDataURL", () => {
 
 draw.on("freeze", () => {
     gameStatus = "freeze";
+    console.log("freeze");
+
+    //啟動圖像 timer
+    document.getElementById("timer").className = "timer1";
+    setTimeout(() => {
+        document.getElementById("timer").className = "timer2";
+        console.log("freeze time");
+    }, 0);
 });
 
 draw.on("game-run", (topic) => {
     gameStatus = "draw";
+    console.log("runnnnn");
 
     //view topic when draw
     const h3 = document.createElement("h3");
@@ -87,6 +96,14 @@ draw.on("game-run", (topic) => {
     span.appendChild(topicText);
     h3.appendChild(span); 
     document.getElementById("topic").appendChild(h3);
+
+    //啟動圖像 timer
+    document.getElementById("timer").className = "timer1";
+    setTimeout(() => {
+        document.getElementById("timer").className = "timer2";
+        console.log("runnnnnn time");
+    }, 0);
+
 });
 
 draw.on("next-turn", () => {
@@ -99,7 +116,7 @@ draw.on("next-turn", () => {
 
 draw.on("your-turn", () => {
     console.log("your-turn");
-    draw.emit("new-round", roomId, userName);
+    draw.emit("game-start", roomId, userName);
 });
 
 draw.on("updateCurrentUser", (usr) => {
@@ -107,8 +124,58 @@ draw.on("updateCurrentUser", (usr) => {
 });
 
 draw.on("send-gameStatus", (gStatus) => {
-    gameStatus = gStatus;
-    if (gameStatus === "start") {
+    if (gStatus === "start") {
         draw.emit("join-after-game-start");
     }
+});
+
+draw.on("send-user-id", (userId) => {
+    userName = userId;
+    document.getElementById("user-name").innerHTML = userId;
+});
+
+draw.on("rankingList-update", (rankingList) => {
+    console.log(rankingList);
+
+    let ranking = document.getElementById("ranking-list");
+    //remove all child node
+    let num = ranking.childNodes.length;        //不能省
+    for (let i=0; i<num ;i++) {
+        ranking.removeChild(ranking.firstChild);
+    }
+
+    //append child
+    for (let i=0; i<rankingList.length ;i++) {
+        appendList("ranking-list", rankingList[i].userId, rankingList[i].score);
+    }
+    
+});
+
+function appendList (tagId, userId, score) {
+    const div = document.createElement("div");
+    const spanUserId = document.createElement("span");
+    spanUserId.className = "ranking-user-id";
+    const spanScore = document.createElement("span");
+    spanScore.className = "ranking-score";
+    const userIdText = document.createTextNode(userId + ": ");
+    const scoreText = document.createTextNode(score);
+
+    spanUserId.appendChild(userIdText);
+    spanScore.appendChild(scoreText);
+    div.appendChild(spanUserId);
+    div.appendChild(spanScore);
+    document.getElementById(tagId).appendChild(div);
+}
+
+draw.on("wait-next-turn", (gStatus, userName, topic) => {
+    if (gStatus === "no-one-hit") {
+        printAnswer("hehe 都沒猜對", userName, topic);
+    }
+    else if (gStatus === "all-correct") {
+        printAnswer("所有人都猜到了", userName, topic);
+    }
+    else if (gStatus === "part-correct") {
+        printAnswer("公布答案~", userName, topic);
+    }
+    console.log("wait-next-turn");
 });

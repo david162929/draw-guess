@@ -8,6 +8,7 @@ ctx = cvs.getContext("2d");                   //抓 canvas 的 2d 繪圖(Context
 let posX, posY, lastPosX = "init", lastPosY = "init";
 let clickStatus = 0;
 
+
 //畫布事件
 cvs.addEventListener("mousedown", () => {
     if (gameStatus !== "freeze") {
@@ -154,3 +155,49 @@ draw.on("enter-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
 draw.on("clearBoard", () => {
     ctx.clearRect(0, 0, cvs.width, cvs.height);         //清空畫面
 });
+
+
+
+/* ----- 狀態畫面 ----- */
+//printAnswer("自訂訊息", "你好你好耶耶耶一耶耶", "蘋果蘋果蘋果");
+
+function printAnswer (sentence, userId, word) {
+    ctx.font = "24px Microsoft JhengHei, Heiti TC";
+    ctx.textAlign = "center";
+
+    let userIdTrans = userId;
+    //id 太長就縮短
+    if (ctx.measureText(userId).width > cvs.width/2 - 20) {
+        let num = parseInt(userId.length * cvs.width /2 / ctx.measureText(userId).width / 1.75);        //多除 1.75 做加權，保險避免超出螢幕
+        userIdTrans = userId.slice(0, num) + "...";
+    }
+
+    statusImg(sentence, userIdTrans, word);
+    dotMove(sentence, userIdTrans, word);
+    const intervalId = setInterval(() => {
+        dotMove(sentence, userIdTrans, word);
+    }, 1500);
+
+    setTimeout(() => {
+        clearInterval(intervalId);
+    }, 4000);
+}
+
+function dotMove (sentence, userId, word) {
+    setTimeout(() => {
+        statusImg(sentence, userId, `${word} .`);
+    }, 500);
+    setTimeout(() => {
+        statusImg(sentence, userId, `${word} ..`);
+    }, 1000);
+    setTimeout(() => {
+        statusImg(sentence, userId, `${word} ...`);
+    }, 1500);
+}
+
+function statusImg (sentence, userId, word) {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);         //清空畫面
+
+    ctx.fillText(sentence, cvs.width/2, cvs.height/2 - 20);
+    ctx.fillText(`${userId} 畫的是： ${word}`, cvs.width/2, cvs.height/2 + 10);
+}

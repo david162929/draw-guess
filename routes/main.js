@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
 	let html = fs.readFileSync("./public/html/index.html", "utf8");
-	console.log(sql);
 	res.send(html);
 });
 
