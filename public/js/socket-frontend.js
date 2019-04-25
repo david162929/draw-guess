@@ -76,11 +76,8 @@ draw.on("freeze", () => {
     console.log("freeze");
 
     //啟動圖像 timer
-    document.getElementById("timer").className = "timer1";
-    setTimeout(() => {
-        document.getElementById("timer").className = "timer2";
-        console.log("freeze time");
-    }, 0);
+    document.getElementById("timer").className = "draw-timer-start";
+
 });
 
 draw.on("game-run", (topic) => {
@@ -98,13 +95,19 @@ draw.on("game-run", (topic) => {
     document.getElementById("topic").appendChild(h3);
 
     //啟動圖像 timer
-    document.getElementById("timer").className = "timer1";
-    setTimeout(() => {
-        document.getElementById("timer").className = "timer2";
-        console.log("runnnnnn time");
-    }, 0);
-
+    document.getElementById("timer").className = "draw-timer-start";
 });
+
+//偵測到填滿的 transition 跑完，就重置成未填滿的樣子
+document.getElementById("timer").addEventListener("transitionend", () => {    
+    if (document.getElementById("timer").className === "draw-timer-start") {
+        document.getElementById("timer").className = "draw-timer-end";
+    }
+    else if (document.getElementById("timer").className === "answer-timer-start") {
+        document.getElementById("timer").className = "answer-timer-end";
+    }
+});
+
 
 draw.on("next-turn", () => {
     console.log("next-turn");
@@ -168,6 +171,8 @@ function appendList (tagId, userId, score) {
 }
 
 draw.on("wait-next-turn", (gStatus, userName, topic) => {
+    //啟動圖像 timer
+    document.getElementById("timer").className = "answer-timer-start";
     if (gStatus === "no-one-hit") {
         printAnswer("hehe 都沒猜對", userName, topic);
     }

@@ -60,6 +60,9 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         //join room
         socket.on("join-room", (lastRoomId, roomId) => {
             socket.leave(lastRoomId, () => {
+                if (rooms[lastRoomId]) {
+                    clearTimeout(rooms[lastRoomId].gameDetail.drawTimerId);        //清掉繪圖計時
+                }
                 console.log("離開成功 上一個 room: " + lastRoomId + "加入的 room: " + roomId);
                 clients[socket.id].room = "";     //清空房間資訊
                 socket.emit("clearBoard");
@@ -115,7 +118,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         });
 
         //game start
-        let drawTimerId;
+        
         socket.on("game-start", (roomId, userName) => {
             //驗證使用者
             if (socket.id === rooms[roomId].gameDetail.currentDraw) {
@@ -135,21 +138,23 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
                 draw.in(roomId).emit("updateCurrentUser", userName);
     
                 //開始計時
-                drawTimerId = setTimeout(() => {
-                    if (rooms[roomId].gameDetail.correct === 0) {
-                        rooms[roomId].gameDetail.gameStatus = "no-one-hit";
+                rooms[roomId].gameDetail.drawTimerId = setTimeout(() => {
+                    if (rooms[roomId]) {
+                        if (rooms[roomId].gameDetail.correct === 0) {
+                            rooms[roomId].gameDetail.gameStatus = "no-one-hit";
+                        }
+                        else if (rooms[roomId].gameDetail.correct === rooms[roomId].clients) {
+                            rooms[roomId].gameDetail.gameStatus = "all-correct";
+                        }
+                        else {
+                            rooms[roomId].gameDetail.gameStatus = "part-correct";
+                        }
+                        draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, userName, topic[itemNum]);
+                        middlePhaseTimer(draw, rooms, roomId);
                     }
-                    else if (rooms[roomId].gameDetail.correct === rooms[roomId].clients) {
-                        rooms[roomId].gameDetail.gameStatus = "all-correct";
-                    }
-                    else {
-                        rooms[roomId].gameDetail.gameStatus = "part-correct";
-                    }
-                    draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, userName, topic[itemNum]);
-                    middlePhaseTimer(draw, rooms, roomId);
-
 
                 }, 10000);
+                console.log("開始計時drawTimerId: "+ Object.keys(rooms[roomId].gameDetail.drawTimerId));
                 
                 console.log(rooms);
             }         
@@ -159,7 +164,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         //answer message
         socket.on("send-answer-message", (roomId, userName, msg) => {
             let itemNum = rooms[roomId].gameDetail.orderNum % topic.length;         //計算當前題目是題目組的第幾個
-            if (msg === topic[itemNum]) {
+            if (msg === topic[itemNum] && rooms[roomId]) {
                 let alreadyCorrect = false;
                 //檢查是否重複
                 for (let x=0; x<rooms[roomId].gameDetail.correctClients.length; x++) {
@@ -200,7 +205,8 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
                         //進入到間隔 phase
                         rooms[roomId].gameDetail.gameStatus = "all-correct";
                         draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, rooms[roomId].rankingList[rankingIndex2].userId, topic[itemNum]);
-                        clearTimeout(drawTimerId);        //清掉繪圖計時
+                        console.log("取消計時器drawTimerId: "+ rooms[roomId].gameDetail.drawTimerId);
+                        clearTimeout(rooms[roomId].gameDetail.drawTimerId);        //清掉繪圖計時
 
                         middlePhaseTimer(draw, rooms, roomId);
                     }
@@ -239,6 +245,9 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         socket.on("disconnect", () => {
             //console.log(Object.keys(socket));
             let disconRoom = clients[socket.id].room;
+            console.log("斷線清除計時: " + rooms[disconRoom].gameDetail.drawTimerId);
+            clearTimeout(rooms[disconRoom].gameDetail.drawTimerId);        //清掉繪圖計時
+            
             console.log("draw disconnected: room: " + disconRoom + " socket.id: " + socket.id);
 
             if (rooms[disconRoom].clients.length === 1 && disconRoom !== "room_1") {
@@ -285,17 +294,19 @@ function findRanking (targetClientId, targetRoomObj) {
 
 function middlePhaseTimer (draw, rooms, roomId) {
     setTimeout(() => {
-        draw.in(roomId).emit("next-turn");
+        if (rooms[roomId]) {
+            draw.in(roomId).emit("next-turn");
                         
-        //輪下一位
-        rooms[roomId].gameDetail.orderNum += 1;
-        let userNum = findClient(rooms[roomId].gameDetail.currentDraw, rooms[roomId]);
-        userNum += 1;                            
-        let socketId = rooms[roomId].clients[userNum] || rooms[roomId].clients[0];
-        rooms[roomId].gameDetail.currentDraw = socketId;
-        draw.to(socketId).emit("your-turn");
-        console.log(userNum, socketId);
-        console.log(rooms);
+            //輪下一位
+            rooms[roomId].gameDetail.orderNum += 1;
+            let userNum = findClient(rooms[roomId].gameDetail.currentDraw, rooms[roomId]);
+            userNum += 1;                            
+            let socketId = rooms[roomId].clients[userNum] || rooms[roomId].clients[0];
+            rooms[roomId].gameDetail.currentDraw = socketId;
+            draw.to(socketId).emit("your-turn");
+            console.log(userNum, socketId);
+            console.log(rooms);
+        }
     }, 5000);
 }
 

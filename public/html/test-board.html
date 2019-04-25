@@ -45,15 +45,19 @@
 				position: relative;
 				margin: 5px auto 5px auto;
 			}
-			.timer1 {
+			.draw-timer-start {
 				width: 450px;
 				height: 10px;
 				position: relative;
 				background-color: lightskyblue;
 				margin: 0 auto;
 				z-index: 1;
+				transition-duration: 1ms;
+				-moz-transition-duration: 1ms;
+				-webkit-transition-duration: 1ms;
+				-o-transition-duration: 1ms;
 			}
-			.timer2 {
+			.draw-timer-end {
 				width: 0px;
 				height: 10px;
 				position: relative;
@@ -61,16 +65,48 @@
 				margin-left: 0;
 				z-index: 1;
 				transition-property: width background-color;
-				transition-duration:10s;
+				transition-duration:9900ms;
 				transition-timing-function: linear;
 				-moz-transition-property: width background-color;
-				-moz-transition-duration:10s;
+				-moz-transition-duration:9900ms;
 				-moz-transition-timing-function: linear;
 				-webkit-transition-property: width background-color;
-				-webkit-transition-duration:10s;
+				-webkit-transition-duration:9900ms;
 				-webkit-transition-timing-function: linear;
 				-o-transition-property: width background-color;
-				-o-transition-duration:10s;
+				-o-transition-duration:9900ms;
+				-o-transition-timing-function: linear;
+			}
+			.answer-timer-start {
+				width: 450px;
+				height: 10px;
+				position: relative;
+				background-color: silver;
+				margin: 0 auto;
+				z-index: 1;
+				transition-duration: 1ms;
+				-moz-transition-duration: 1ms;
+				-webkit-transition-duration: 1ms;
+				-o-transition-duration: 1ms;
+			}
+			.answer-timer-end {
+				width: 0px;
+				height: 10px;
+				position: relative;
+				background-color: silver;
+				margin-left: 0;
+				z-index: 1;
+				transition-property: width background-color;
+				transition-duration:4900ms;
+				transition-timing-function: linear;
+				-moz-transition-property: width background-color;
+				-moz-transition-duration:4900ms;
+				-moz-transition-timing-function: linear;
+				-webkit-transition-property: width background-color;
+				-webkit-transition-duration:4900ms;
+				-webkit-transition-timing-function: linear;
+				-o-transition-property: width background-color;
+				-o-transition-duration:4900ms;
 				-o-transition-timing-function: linear;
 			}
 			
@@ -94,7 +130,7 @@
 		<div id="game-start"></div>
         <div class="draw-board">
 			<canvas id="cvs" width="500" height="500"></canvas>
-			<div id="outer-timer"><div id="timer" class="timer1"></div></div>
+			<div id="outer-timer"><div id="timer" class="draw-timer-end"></div></div>
 		</div>
 		<div class="container">
 			<div class="chatBox">
@@ -180,7 +216,9 @@
 				timer.className = "timer1";
 			}
 		}
-		window.setTimeout(() => {go();}, 0);
+		//document.getElementById("timer").className = "timer2";
+		//go();
+		//window.setTimeout(() => {go();}, 0);
 		//window.setInterval(go, 11000);
 
 	</script>

@@ -109,6 +109,7 @@ class GameDetail {
 		this.correct = 0;
 		this.gameStatus = "wait";
 		this.currentDraw = "";
+		this.drawTimerId = null;
 	}
 }
 
