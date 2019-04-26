@@ -3,14 +3,18 @@ const fs = require("fs");
 const path = require("path");
 const router = express.Router();
 
-router.get("/", (req, res) => {
+/* router.get("/", (req, res) => {
 	let html = fs.readFileSync("./public/html/index.html", "utf8");
 	res.send(html);
-});
+}); */
 
-router.get("/2", (req, res) => {
+router.get("/", (req, res) => {
 	res.sendFile(path.join(__dirname, "../public/html/index.html"));
 });
+
+/* router.get("/", (req, res) => {
+	res.render("index.pug");
+}); */
 
 router.get("/draw-board", (req, res) => {
 	res.sendFile(path.join(__dirname, "../public/html/draw-board.html"));

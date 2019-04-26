@@ -1,0 +1,24 @@
+extends base.pug
+block css
+    link(rel='stylesheet', href='static/css/index.css')
+block content
+    header
+        h1.web-title Draw and Guess !
+    section#main-content
+        .container
+            .card.text-center
+                .card-header Quick Play
+                .user-photo
+                    img.card-img-top(src='static/img/default-usericon-colorful-colors.jpg', alt='...')
+                .card-body
+                    form
+                        .form-group.row
+                            label.col-md-3.col-sm-4.col-form-label Nickname : 
+                            .col-sm-4
+                                input.form-control(type='text', id='', placeholder='Your player ID.')
+                        .form-group.row
+                            label.col-md-3.col-sm-4.col-form-label Room name : 
+                            .col-sm-4
+                                input.form-control(type='text', id='', placeholder='Enter room ID.')
+                            .col-sm-10
+                                button#play-button.btn.btn-primary(type='submit') Play

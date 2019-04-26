@@ -60,15 +60,16 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         //join room
         socket.on("join-room", (lastRoomId, roomId) => {
             socket.leave(lastRoomId, () => {
-                if (rooms[lastRoomId]) {
-                    clearTimeout(rooms[lastRoomId].gameDetail.drawTimerId);        //清掉繪圖計時
-                }
+
                 console.log("離開成功 上一個 room: " + lastRoomId + "加入的 room: " + roomId);
                 clients[socket.id].room = "";     //清空房間資訊
                 socket.emit("clearBoard");
                 
                 //remove user id in last room
                 if (rooms[lastRoomId].clients.length === 1 && lastRoomId !== "room_1") {
+                    if (rooms[lastRoomId]) {
+                        clearTimeout(rooms[lastRoomId].gameDetail.drawTimerId);        //清掉繪圖計時
+                    }
                     delete rooms[lastRoomId];       //如果是最後一位離開房間，就連同房間一起刪除
                 }
                 else {
@@ -240,17 +241,15 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
             socket.emit("freeze");			//該玩家凍結
             //socket.emit("updateCurrentUser");
         });
-        
 
         socket.on("disconnect", () => {
             //console.log(Object.keys(socket));
             let disconRoom = clients[socket.id].room;
-            console.log("斷線清除計時: " + rooms[disconRoom].gameDetail.drawTimerId);
-            clearTimeout(rooms[disconRoom].gameDetail.drawTimerId);        //清掉繪圖計時
-            
             console.log("draw disconnected: room: " + disconRoom + " socket.id: " + socket.id);
 
             if (rooms[disconRoom].clients.length === 1 && disconRoom !== "room_1") {
+                console.log("斷線清除計時: " + rooms[disconRoom].gameDetail.drawTimerId);
+                clearTimeout(rooms[disconRoom].gameDetail.drawTimerId);        //清掉繪圖計時
                 delete rooms[disconRoom];               //如果是最後一位離開房間，就連同房間一起刪除
                 delete clients[socket.id];              //刪除 clients 中的使用者
             }

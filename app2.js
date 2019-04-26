@@ -4,7 +4,6 @@ const mysql = require('mysql2');
 const Client = require('ssh2').Client;
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const fs = require('fs');
 
 const app = express();
 
