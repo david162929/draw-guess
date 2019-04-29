@@ -143,7 +143,7 @@
 			roomId = document.cookie.replace(/(?:(?:^|.*;\s*)roomId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 			document.getElementById("roomId").innerHTML = roomId;
 			draw.emit("join-room", lastRoomId, roomId);
-		}, 100);
+		}, 500);
 
 
 	</script>
