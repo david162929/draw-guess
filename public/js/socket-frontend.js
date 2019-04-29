@@ -160,7 +160,7 @@ function appendList (tagId, userId, score) {
     spanUserId.className = "ranking-user-id";
     const spanScore = document.createElement("span");
     spanScore.className = "ranking-score";
-    const userIdText = document.createTextNode(userId + ": ");
+    const userIdText = document.createTextNode(userId + " : ");
     const scoreText = document.createTextNode(score);
 
     spanUserId.appendChild(userIdText);

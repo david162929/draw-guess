@@ -1,0 +1,154 @@
+/* ================================= 
+  Body Content Styles
+==================================== */
+
+.container {
+    border: 1px solid #000;
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px 15px;
+}
+
+.content-1 {
+    display: flex;
+    justify-content: center;
+}
+
+.info {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.monitor {
+    display: none;
+}
+
+/* ---- Canvas ---- */
+#cvs {
+    border: 1px solid #000;	
+    display: block;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;		
+}
+
+/* ---- Ranking List ---- */
+#ranking-list {
+    width: 150px;
+    height: 500px;
+    margin: 20px 30px;
+    padding: 5px 10px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+.ranking-user-id {
+    font-size: 16pt;
+    font-weight: bold;
+    color: silver;
+}
+.ranking-score {
+    font-size: 14pt;
+    color: #000;
+}
+
+
+
+/* ---- Chat Box ---- */
+
+#chat-content {
+    border-bottom: 1px solid #000;
+    height: 200px;
+    overflow: auto;
+}
+#chat-input {
+    width: 80%;
+    margin: 5px auto;
+    margin-left: 5%;
+}
+.chat-user {
+    font-size: 18pt;
+    font-weight: bold;
+    color: slateblue;
+}
+.chat-message {
+    font-size: 14pt;
+    color: rgb(109, 109, 109);
+}
+
+/* ---- Timer ---- */
+.draw-board {
+    position: relative;
+}
+#outer-timer {
+    width: 450px;
+    height: 10px;
+    border: 1px solid silver;
+    position: relative;
+    margin: 5px auto 5px auto;
+}
+.draw-timer-start {
+    width: 450px;
+    height: 10px;
+    position: relative;
+    background-color: lightskyblue;
+    margin: 0 auto;
+    z-index: 1;
+    transition-duration: 1ms;
+    -moz-transition-duration: 1ms;
+    -webkit-transition-duration: 1ms;
+    -o-transition-duration: 1ms;
+}
+.draw-timer-end {
+    width: 0px;
+    height: 10px;
+    position: relative;
+    background-color: lightcoral;
+    margin-left: 0;
+    z-index: 1;
+    transition-property: width background-color;
+    transition-duration:9900ms;
+    transition-timing-function: linear;
+    -moz-transition-property: width background-color;
+    -moz-transition-duration:9900ms;
+    -moz-transition-timing-function: linear;
+    -webkit-transition-property: width background-color;
+    -webkit-transition-duration:9900ms;
+    -webkit-transition-timing-function: linear;
+    -o-transition-property: width background-color;
+    -o-transition-duration:9900ms;
+    -o-transition-timing-function: linear;
+}
+.answer-timer-start {
+    width: 450px;
+    height: 10px;
+    position: relative;
+    background-color: silver;
+    margin: 0 auto;
+    z-index: 1;
+    transition-duration: 1ms;
+    -moz-transition-duration: 1ms;
+    -webkit-transition-duration: 1ms;
+    -o-transition-duration: 1ms;
+}
+.answer-timer-end {
+    width: 0px;
+    height: 10px;
+    position: relative;
+    background-color: silver;
+    margin-left: 0;
+    z-index: 1;
+    transition-property: width background-color;
+    transition-duration:4900ms;
+    transition-timing-function: linear;
+    -moz-transition-property: width background-color;
+    -moz-transition-duration:4900ms;
+    -moz-transition-timing-function: linear;
+    -webkit-transition-property: width background-color;
+    -webkit-transition-duration:4900ms;
+    -webkit-transition-timing-function: linear;
+    -o-transition-property: width background-color;
+    -o-transition-duration:4900ms;
+    -o-transition-timing-function: linear;
+}

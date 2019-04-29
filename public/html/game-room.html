@@ -13,32 +13,43 @@
 		</style>
     </head>
     <body>
-        <h1>Wellcome to Draw-guess!</h1>
-		<h3>網站在線人數： <span id="onlineCount"></span></h3>
-		<h3>房間在線人數： <span id="onlineCount-room"></span></h3>
-		<h3>玩家名稱： <span id="user-name">訪客</span></h3>
-		<label>更改：</label>
-		<input type="text" id="user-name-input">
-		<button id="changeUserName" onclick="changeUserName();">確定</button>
-		<h3>房號： <span id="roomId">room_1</span></h3>
-		<label>前往：</label>
-		<input type="text" id="roomIdNew">
-		<button id="joinRoom" onclick="joinRoom();">Go</button>
-		<h3>當前回合玩家： <span id="userCurrentTurn">等待中</span></h3>
-		<div id="ranking-list"></div>
-		<div id="topic"></div>
-		<div id="game-start"></div>
-        <div class="draw-board">
-			<canvas id="cvs" width="700" height="500"></canvas>
-			<div id="outer-timer"><div id="timer" class="draw-timer-end"></div></div>
+		<div class="monitor">
+			<h1>Wellcome to Draw-guess!</h1>
+			<h3>網站在線人數： <span id="onlineCount"></span></h3>
+			<h3>房間在線人數： <span id="onlineCount-room"></span></h3>
+			<h3>玩家名稱： <span id="user-name">訪客</span></h3>
+			<label>更改：</label>
+			<input type="text" id="user-name-input">
+			<button id="changeUserName" onclick="changeUserName();">確定</button>
+			<h3>房號： <span id="roomId">room_1</span></h3>
+			<label>前往：</label>
+			<input type="text" id="roomIdNew">
+			<button id="joinRoom" onclick="joinRoom();">Go</button>
 		</div>
+
+		<h3 class="info">當前回合玩家： <span id="userCurrentTurn">等待中</span></h3>
+		
+		<div id="topic" class="info"></div>
+		<div id="game-start" class="info"></div>
+
+		<div class="content-1">
+
+			<div id="ranking-list" class="ranking-list"></div>
+			
+			
+			<div class="draw-board">
+				<canvas id="cvs" width="700" height="500"></canvas>
+				<div id="outer-timer"><div id="timer" class="draw-timer-end"></div></div>
+			</div>
+		</div>
+			
 		<div class="container">
 			<div class="chatBox">
 				<div id="chat-content">
 
 				</div>
 				<div id="send-content">
-					<input type="text" name="msg" id="chat-input" placeholder="J個題目的答案是?">
+					<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?">
 					<!-- <button type="submit" id="chat-button" onclick="sendMessage();">送出</button> -->
 				</div>
 			</div>
@@ -68,7 +79,7 @@
 			spanName.className = "chat-user";
 			const spanMessage = document.createElement("span");
 			spanMessage.className = "chat-message";
-			const userText = document.createTextNode(userName + ": ");
+			const userText = document.createTextNode(userName + " : ");
 			const msgText = document.createTextNode(msg);
 
 			spanName.appendChild(userText);
@@ -122,6 +133,18 @@
 		//go();
 		//window.setTimeout(() => {go();}, 0);
 		//window.setInterval(go, 11000);
+
+		//使用 cookie 當中的資訊幫使用者做加入房間跟改名
+		setTimeout(() => {
+			userName = document.cookie.replace(/(?:(?:^|.*;\s*)playerId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+			document.getElementById("user-name").innerHTML = userName;
+			draw.emit("change-user-id", userName);
+
+			roomId = document.cookie.replace(/(?:(?:^|.*;\s*)roomId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+			document.getElementById("roomId").innerHTML = roomId;
+			draw.emit("join-room", lastRoomId, roomId);
+		}, 100);
+
 
 	</script>
 

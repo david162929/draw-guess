@@ -142,7 +142,7 @@ class ClientDetail {
 }
 const clients = {};
 
-const topic = ["蘋果", "香蕉", "鳳梨", "芭樂"];
+const topic = ["蘋果", "香蕉", "鳳梨", "芭樂", "草莓", "椰子", "檸檬", "柳橙", "柚子", "荔枝", "葡萄"];
 
 
 //for draw-board

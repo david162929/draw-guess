@@ -29,7 +29,7 @@ router.get("/draw-board-test", (req, res) => {
 });
 
 router.get("/test-board", (req, res) => {
-	res.sendFile(path.join(__dirname, "../public/html/test-board.html"));
+	res.sendFile(path.join(__dirname, "../public/html/game-room.html"));
 });
 
 module.exports = router;
