@@ -7,6 +7,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
         //change user id
         socket.on("change-user-id", (userName) => {
             clients[socket.id].userId = userName;
+            socket.emit("send-user-id", clients[socket.id].userId);         //送出別名
         });
 
         socket.join("room_1", () => {
