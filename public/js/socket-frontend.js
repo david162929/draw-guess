@@ -79,7 +79,7 @@ draw.on("freeze", () => {
     document.getElementById("timer").className = "draw-timer-start";
     setTimeout(() => {
         document.getElementById("timer").className = "draw-timer-end";
-    }, 100);
+    }, 500);
 
 });
 
@@ -101,7 +101,7 @@ draw.on("game-run", (topic) => {
     document.getElementById("timer").className = "draw-timer-start";
     setTimeout(() => {
         document.getElementById("timer").className = "draw-timer-end";
-    }, 100);
+    }, 500);
 });
 
 /* //偵測到填滿的 transition 跑完，就重置成未填滿的樣子
@@ -182,7 +182,7 @@ draw.on("wait-next-turn", (gStatus, userName, topic) => {
 
     setTimeout(() => {
         document.getElementById("timer").className = "answer-timer-end";
-    }, 100);
+    }, 500);
 
     if (gStatus === "no-one-hit") {
         printAnswer("hehe 都沒猜對", userName, topic);
