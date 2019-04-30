@@ -88,7 +88,7 @@
     position: relative;
     margin: 5px auto 5px auto;
 }
-.draw-timer-start {
+/* .draw-timer-start {
     width: 450px;
     height: 8px;
     position: relative;
@@ -96,7 +96,7 @@
     margin: 0 auto;
     z-index: 1;
     transition-property: none;
-    /*transition-duration: 1ms;*/
+    //transition-duration: 100ms;
 }
 .draw-timer-end {
     width: 0px;
@@ -117,7 +117,7 @@
     margin: 0 auto;
     z-index: 1;
     transition-property: none;
-    /*transition-duration: 1ms;*/
+    //transition-duration: 100ms;
 
 }
 .answer-timer-end {
@@ -131,4 +131,40 @@
     transition-duration:4400ms;
     transition-timing-function: linear;
 
+} */
+.draw-timer {
+    width: 0px;
+    height: 8px;
+    position: relative;
+    background-color: papayawhip;
+    margin-left: 0;
+    z-index: 1;
+    animation: drawCountdown 10s linear;
+}
+.middle-timer {
+    width: 0px;
+    height: 8px;
+    position: relative;
+    background-color: lightgray;
+    margin-left: 0;
+    z-index: 1;
+    animation: middleCountdown 5s linear;
+}
+@keyframes drawCountdown {
+    0% {
+        width: 450px;
+        background-color: papayawhip;
+    }
+    100% {
+        width: 0px;
+        background-color: lightcoral;
+    }
+}
+@keyframes middleCountdown {
+    0% {
+        width:450px;
+    }
+    100% {
+        width:0px;
+    }
 }

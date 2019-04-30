@@ -76,11 +76,11 @@ draw.on("freeze", () => {
     console.log("freeze");
 
     //啟動圖像 timer
-    document.getElementById("timer").className = "draw-timer-start";
-    setTimeout(() => {
-        document.getElementById("timer").className = "draw-timer-end";
-    }, 10);
-
+    document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
+    let newTimer = document.createElement("div");
+    newTimer.id = "timer";
+    newTimer.className = "draw-timer";
+    document.getElementById("outer-timer").appendChild(newTimer);
 });
 
 draw.on("game-run", (topic) => {
@@ -98,21 +98,21 @@ draw.on("game-run", (topic) => {
     document.getElementById("topic").appendChild(h3);
 
     //啟動圖像 timer
-    document.getElementById("timer").className = "draw-timer-start";
-    setTimeout(() => {
-        document.getElementById("timer").className = "draw-timer-end";
-    }, 10);
-});
+    document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
+    let newTimer = document.createElement("div");
+    newTimer.id = "timer";
+    newTimer.className = "draw-timer";
+    document.getElementById("outer-timer").appendChild(newTimer);
 
-/* //偵測到填滿的 transition 跑完，就重置成未填滿的樣子
-document.getElementById("timer").addEventListener("transitionend", () => {    
-    if (document.getElementById("timer").className === "draw-timer-start") {
+/*     document.getElementById("timer").className = "draw-timer-start";
+
+    window.requestAnimationFrame(() => {
         document.getElementById("timer").className = "draw-timer-end";
-    }
-    else if (document.getElementById("timer").className === "answer-timer-start") {
-        document.getElementById("timer").className = "answer-timer-end";
-    }
-}); */
+    }); */
+    // setTimeout(() => {
+    //     document.getElementById("timer").className = "draw-timer-end";
+    // }, 10);
+});
 
 
 draw.on("next-turn", () => {
@@ -178,11 +178,11 @@ function appendList (tagId, userId, score) {
 
 draw.on("wait-next-turn", (gStatus, userName, topic) => {
     //啟動圖像 timer
-    document.getElementById("timer").className = "answer-timer-start";
-
-    setTimeout(() => {
-        document.getElementById("timer").className = "answer-timer-end";
-    }, 10);
+    document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
+    let newTimer = document.createElement("div");
+    newTimer.id = "timer";
+    newTimer.className = "middle-timer";
+    document.getElementById("outer-timer").appendChild(newTimer);
 
     if (gStatus === "no-one-hit") {
         printAnswer("hehe 都沒猜對", userName, topic);
