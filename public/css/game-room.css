@@ -96,9 +96,6 @@
     margin: 0 auto;
     z-index: 1;
     transition-duration: 1ms;
-    -moz-transition-duration: 1ms;
-    -webkit-transition-duration: 1ms;
-    -o-transition-duration: 1ms;
 }
 .draw-timer-end {
     width: 0px;
@@ -107,18 +104,9 @@
     background-color: lightcoral;
     margin-left: 0;
     z-index: 1;
-    transition-property: width background-color;
+    transition-property: width, background-color;
     transition-duration:9900ms;
     transition-timing-function: linear;
-    -moz-transition-property: width background-color;
-    -moz-transition-duration:9900ms;
-    -moz-transition-timing-function: linear;
-    -webkit-transition-property: width background-color;
-    -webkit-transition-duration:9900ms;
-    -webkit-transition-timing-function: linear;
-    -o-transition-property: width background-color;
-    -o-transition-duration:9900ms;
-    -o-transition-timing-function: linear;
 }
 .answer-timer-start {
     width: 450px;
@@ -128,9 +116,7 @@
     margin: 0 auto;
     z-index: 1;
     transition-duration: 1ms;
-    -moz-transition-duration: 1ms;
-    -webkit-transition-duration: 1ms;
-    -o-transition-duration: 1ms;
+
 }
 .answer-timer-end {
     width: 0px;
@@ -139,16 +125,8 @@
     background-color: silver;
     margin-left: 0;
     z-index: 1;
-    transition-property: width background-color;
+    transition-property: width, background-color;
     transition-duration:4400ms;
     transition-timing-function: linear;
-    -moz-transition-property: width background-color;
-    -moz-transition-duration:4400ms;
-    -moz-transition-timing-function: linear;
-    -webkit-transition-property: width background-color;
-    -webkit-transition-duration:4400ms;
-    -webkit-transition-timing-function: linear;
-    -o-transition-property: width background-color;
-    -o-transition-duration:4400ms;
-    -o-transition-timing-function: linear;
+
 }
