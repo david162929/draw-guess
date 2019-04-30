@@ -49,8 +49,9 @@
 
 				</div>
 				<div id="send-content">
-					<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?">
-					<!-- <button type="submit" id="chat-button" onclick="sendMessage();">送出</button> -->
+					<form id="chat-form">
+						<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?" autocomplete="off">
+					</form>
 				</div>
 			</div>
 		</div>
@@ -64,10 +65,10 @@
 	<script src="/static/js/draw-board.js"></script>
 	<script>
 		//Press Enter to send
-		const chatInput = document.getElementById("chat-input");
-		chatInput.addEventListener("keydown", (event) => {
-			const keyName = event.key;
-			if(keyName === "Enter" && document.getElementById("chat-input").value !== "") {
+		const chatForm = document.getElementById("chat-form");
+		chatForm.addEventListener("submit", (event) => {
+			event.preventDefault();
+			if(document.getElementById("chat-input").value !== "") {
 				sendMessage();
 			}
 		})
@@ -119,20 +120,6 @@
 				draw.emit("send-chat-message", roomId, userName, msg);
 			}
 		}
-
-		function go () {
-			let timer = document.getElementById("timer");
-			if (timer.className === "timer1") {
-				timer.className = "timer2";
-			}
-			else {
-				timer.className = "timer1";
-			}
-		}
-		//document.getElementById("timer").className = "timer2";
-		//go();
-		//window.setTimeout(() => {go();}, 0);
-		//window.setInterval(go, 11000);
 
 		//使用 cookie 當中的資訊幫使用者做加入房間跟改名
 		setTimeout(() => {

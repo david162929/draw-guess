@@ -38,7 +38,7 @@
 #ranking-list {
     width: 150px;
     height: 500px;
-    margin: 20px 30px;
+    margin: 20px 30px 20px 0;
     padding: 5px 10px;
     background-color: #fff;
     border-radius: 10px;
@@ -63,9 +63,9 @@
     overflow: auto;
 }
 #chat-input {
-    width: 80%;
-    margin: 5px auto;
-    margin-left: 5%;
+    width: 100%;
+    margin: 0px auto;
+    padding-left: 8px;
 }
 .chat-user {
     font-size: 18pt;
@@ -90,7 +90,7 @@
 }
 .draw-timer-start {
     width: 450px;
-    height: 10px;
+    height: 8px;
     position: relative;
     background-color: lightskyblue;
     margin: 0 auto;
@@ -102,7 +102,7 @@
 }
 .draw-timer-end {
     width: 0px;
-    height: 10px;
+    height: 8px;
     position: relative;
     background-color: lightcoral;
     margin-left: 0;
@@ -122,7 +122,7 @@
 }
 .answer-timer-start {
     width: 450px;
-    height: 10px;
+    height: 8px;
     position: relative;
     background-color: silver;
     margin: 0 auto;
@@ -134,21 +134,21 @@
 }
 .answer-timer-end {
     width: 0px;
-    height: 10px;
+    height: 8px;
     position: relative;
     background-color: silver;
     margin-left: 0;
     z-index: 1;
     transition-property: width background-color;
-    transition-duration:4900ms;
+    transition-duration:4400ms;
     transition-timing-function: linear;
     -moz-transition-property: width background-color;
-    -moz-transition-duration:4900ms;
+    -moz-transition-duration:4400ms;
     -moz-transition-timing-function: linear;
     -webkit-transition-property: width background-color;
-    -webkit-transition-duration:4900ms;
+    -webkit-transition-duration:4400ms;
     -webkit-transition-timing-function: linear;
     -o-transition-property: width background-color;
-    -o-transition-duration:4900ms;
+    -o-transition-duration:4400ms;
     -o-transition-timing-function: linear;
 }

@@ -1,5 +1,8 @@
 //for draw-board
 function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDetail, Ranking) {
+    const drawTime = 10000;
+    const middlePhaseTime = 5000;
+
     const draw = io.of("/draw");
     draw.on("connection", (socket) => {
         console.log("draw connected.");
@@ -152,10 +155,10 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
                             rooms[roomId].gameDetail.gameStatus = "part-correct";
                         }
                         draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, userName, topic[itemNum]);
-                        middlePhaseTimer(draw, rooms, roomId);
+                        middlePhaseTimer(draw, rooms, roomId, middlePhaseTime);
                     }
 
-                }, 10000);
+                }, drawTime);
                 console.log("開始計時drawTimerId: "+ Object.keys(rooms[roomId].gameDetail.drawTimerId));
                 
                 console.log(rooms);
@@ -210,7 +213,7 @@ function drawSocket (io, rooms, topic, GameDetail, clients, ClientDetail, RoomDe
                         console.log("取消計時器drawTimerId: "+ rooms[roomId].gameDetail.drawTimerId);
                         clearTimeout(rooms[roomId].gameDetail.drawTimerId);        //清掉繪圖計時
 
-                        middlePhaseTimer(draw, rooms, roomId);
+                        middlePhaseTimer(draw, rooms, roomId, middlePhaseTime);
                     }
 
 
@@ -292,7 +295,7 @@ function findRanking (targetClientId, targetRoomObj) {
     }
 }
 
-function middlePhaseTimer (draw, rooms, roomId) {
+function middlePhaseTimer (draw, rooms, roomId, time) {
     setTimeout(() => {
         if (rooms[roomId]) {
             draw.in(roomId).emit("next-turn");
@@ -307,7 +310,7 @@ function middlePhaseTimer (draw, rooms, roomId) {
             console.log(userNum, socketId);
             console.log(rooms);
         }
-    }, 5000);
+    }, time);
 }
 
 // function timerRun (socket, io, roomId) {
