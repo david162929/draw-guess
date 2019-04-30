@@ -77,9 +77,9 @@ draw.on("freeze", () => {
 
     //啟動圖像 timer
     document.getElementById("timer").className = "draw-timer-start";
-    // setTimeout(() => {
-    //     document.getElementById("timer").className = "draw-timer-end";
-    // }, 500);
+    setTimeout(() => {
+        document.getElementById("timer").className = "draw-timer-end";
+    }, 10);
 
 });
 
@@ -99,12 +99,12 @@ draw.on("game-run", (topic) => {
 
     //啟動圖像 timer
     document.getElementById("timer").className = "draw-timer-start";
-    // setTimeout(() => {
-    //     document.getElementById("timer").className = "draw-timer-end";
-    // }, 500);
+    setTimeout(() => {
+        document.getElementById("timer").className = "draw-timer-end";
+    }, 10);
 });
 
-//偵測到填滿的 transition 跑完，就重置成未填滿的樣子
+/* //偵測到填滿的 transition 跑完，就重置成未填滿的樣子
 document.getElementById("timer").addEventListener("transitionend", () => {    
     if (document.getElementById("timer").className === "draw-timer-start") {
         document.getElementById("timer").className = "draw-timer-end";
@@ -112,7 +112,7 @@ document.getElementById("timer").addEventListener("transitionend", () => {
     else if (document.getElementById("timer").className === "answer-timer-start") {
         document.getElementById("timer").className = "answer-timer-end";
     }
-});
+}); */
 
 
 draw.on("next-turn", () => {
@@ -180,9 +180,9 @@ draw.on("wait-next-turn", (gStatus, userName, topic) => {
     //啟動圖像 timer
     document.getElementById("timer").className = "answer-timer-start";
 
-    // setTimeout(() => {
-    //     document.getElementById("timer").className = "answer-timer-end";
-    // }, 500);
+    setTimeout(() => {
+        document.getElementById("timer").className = "answer-timer-end";
+    }, 10);
 
     if (gStatus === "no-one-hit") {
         printAnswer("hehe 都沒猜對", userName, topic);
