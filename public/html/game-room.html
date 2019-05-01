@@ -125,11 +125,11 @@
 
 		//使用 cookie 當中的資訊幫使用者做加入房間跟改名
 		setTimeout(() => {
-			userName = document.cookie.replace(/(?:(?:^|.*;\s*)playerId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+			userName = document.cookie.replace(/(?:^|.*;\s*)playerId\s*\=\s*([^;]*).*$|^.*$/, "$1");
 			document.getElementById("user-name").innerHTML = userName;
 			draw.emit("change-user-id", userName);
 
-			roomId = document.cookie.replace(/(?:(?:^|.*;\s*)roomId\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+			roomId = document.cookie.replace(/(?:^|.*;\s*)roomId\s*\=\s*([^;]*).*$|^.*$/, "$1");
 			document.getElementById("roomId").innerHTML = roomId;
 			draw.emit("join-room", lastRoomId, roomId);
 		}, 1000);
