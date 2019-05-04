@@ -5,6 +5,8 @@ function mainSocket (io) {
         onlineCount ++;
         io.emit("online", onlineCount);
         console.log("a user connected.");
+
+        
         
         socket.on("disconnect", () => {
             console.log('user disconnected.');
@@ -12,15 +14,6 @@ function mainSocket (io) {
                 onlineCount -= 1;
             }
             io.emit("online", onlineCount);
-        });
-        
-        socket.on("hello", (msg) => {
-            socket.emit("hi", msg);
-        });
-        
-        socket.on("send", (msg) => {
-            //console.log(msg);
-            io.emit("msg",msg);
         });
     });
 }

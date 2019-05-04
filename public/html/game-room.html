@@ -38,25 +38,26 @@
 			
 			
 			<div class="draw-board">
-				<canvas id="cvs" width="700" height="500"></canvas>
+				<canvas id="cvs" width="500" height="380"></canvas>
 				<div id="outer-timer">
 					<div id="timer" class="draw-timer-end"></div>
 				</div>
 			</div>
-		</div>
 			
-		<div class="container">
-			<div class="chatBox">
-				<div id="chat-content">
-
+			<!-- <div class="container"> -->
+				<div class="chatBox">
+					<div id="chat-content">
+						
+					</div>
+					<div id="send-content">
+						<form id="chat-form">
+							<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?" autocomplete="off">
+						</form>
+					</div>
 				</div>
-				<div id="send-content">
-					<form id="chat-form">
-						<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?" autocomplete="off">
-					</form>
-				</div>
-			</div>
-		</div>
+			<!-- </div> -->
+			<!-- class="container" -->
+		</div><!-- class="content-1" -->
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -76,12 +77,12 @@
 		})
 
 		//View message
-		function appendMessage(tagId, userName, msg) {
+		function appendMessage(tagId, userName, msg, msgClass) {
 			const div = document.createElement("div");
 			const spanName = document.createElement("span");
 			spanName.className = "chat-user";
 			const spanMessage = document.createElement("span");
-			spanMessage.className = "chat-message";
+			spanMessage.className = msgClass;
 			const userText = document.createTextNode(userName + " : ");
 			const msgText = document.createTextNode(msg);
 

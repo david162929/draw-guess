@@ -35,7 +35,11 @@ draw.on("join-succeed", (roomUserNum) => {
 });
 
 draw.on("send-chat-message", (userName, msg) => {
-    appendMessage("chat-content", userName, msg);
+    appendMessage("chat-content", userName, msg, "chat-message");
+});
+
+draw.on("hit-correct-message", (userName, msg) => {
+    appendMessage("chat-content", userName, msg, "correct-message");
 });
 
 draw.on("leave-succeed", (roomUserNum) => {

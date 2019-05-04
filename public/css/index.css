@@ -19,7 +19,10 @@
 } */
 .card {
     border: none;
-    border-radius: 15px;
+    border-radius: 10px;
+}
+.user-input {
+    justify-content: center;
 }
 .user-photo {
     width: 150px;
@@ -36,4 +39,27 @@
 }
 #play-button{
     margin-top: 20px;
+}
+
+/* ---- Room List ---- */
+.room-list {
+    height: 380px;
+    background-color: lightsteelblue;
+    border-radius: .25rem;
+    overflow: auto;
+    padding-bottom: 2%;
+}
+.room-list-item {
+    width: 96%;
+    margin: 2% auto 0 auto;
+    border-radius: .25rem;
+    cursor: pointer;
+}
+.roomId {
+    font-size: 20px;
+    font-weight: 600;
+    color: rgb(87, 87, 87);
+}
+.client-num {
+    color: gray;
 }

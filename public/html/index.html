@@ -8,6 +8,8 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="stylesheet" href="static/css/style.css">
 		<link rel="stylesheet" href="static/css/index.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
 		<style>       
 		</style>
 	</head>
@@ -18,31 +20,47 @@
 
 		<section id="main-content">
 			<div class="container">
-				<div class="card text-center">
-					<div class="card-header">Quick Play</div>
-					<div class="user-photo">
-							<img src="static/img/default-usericon-colorful-colors.jpg" class="card-img-top" alt="...">
-					</div>
-					<div class="card-body">
-						<form action="/test-board" method="get">
-							<div class="form-group row">
-								<label class="col-md-3 col-sm-4 col-form-label">Nickname : </label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" id="playerId" placeholder="Your player ID.">
+				<div class="card-group">
+					<div class="card text-center">
+						<div class="card-header">PLAYER INFO</div>
+						<div class="user-photo">
+								<img src="static/img/default-usericon-colorful-colors.jpg" class="card-img-top" alt="...">
+						</div>
+						
+						<div class="card-body">
+							<form action="/test-board" method="get">
+								<div class="form-group row user-input">
+									<label class="col-md-3 col-sm-4 col-form-label">Nickname : </label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" id="playerId" placeholder="Your player ID.">
+									</div>
 								</div>
-							</div>
-							<div class="form-group row">
-								<label class="col-md-3 col-sm-4 col-form-label">Room name : </label>
-								<div class="col-sm-4">
-									<input type="text" class="form-control" id="roomId" placeholder="Enter room ID.">
+								<div class="form-group row user-input">
+									<label class="col-md-3 col-sm-4 col-form-label">Room name : </label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" id="roomId" placeholder="Enter room ID.">
+									</div>
+									<div class="col-sm-10">
+										<button type="submit" id="play-button" class="btn btn-primary">Play</button>
+									</div>
 								</div>
-							<div class="col-sm-10">
-								<button type="submit" id="play-button" class="btn btn-primary">Play</button>
+							</form>
+						</div><!-- class="card-body" -->
+					</div><!-- class="card text-center" -->
+
+					<div class="card text-center">
+						<div class="card-header">JOIN ROOM</div>
+
+						<div class="card-body">
+							<div id="room-list" class="room-list list-group">
 							</div>
-						</form>
-					</div>
-				</div>
-			</div>
+
+							
+						</div><!-- class="card-body" -->
+					</div><!-- class="card text-center" -->
+
+				</div><!-- class="card-group" -->
+			</div><!-- class="container" -->
 		</section>
 
 <!-- 		<footer class="footer clearfix">
@@ -52,17 +70,78 @@
 				</li>
 			</ul>
 		</footer> -->
-		<script>
-			document.getElementById("play-button").addEventListener("mouseenter", (event) => {
-				//event.preventDefault();
-				const playerId = document.getElementById("playerId").value;
-				const roomId = document.getElementById("roomId").value;
-				document.cookie = `playerId=${playerId}`;
-				document.cookie = `roomId=${roomId}`;
-			});
-		</script>
+
 		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 	</body>
+	<script src="/static/js/lib.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/static/js/socket-index.js"></script>
+	<script>
+		document.getElementById("play-button").addEventListener("mouseenter", (event) => {
+			//event.preventDefault();
+			const playerId = document.getElementById("playerId").value;
+			const roomId = document.getElementById("roomId").value;
+			document.cookie = `playerId=${playerId}`;
+			document.cookie = `roomId=${roomId}`;
+		});
+
+		//取得 rooms 資料
+		const set = {
+			headers: {"Content-Type": "application/json"},
+			method: "get"
+		}
+		fetch(`${cst.host}/api/1.0/rooms-detail`, set)
+		.then((res) => {
+			if (!res.ok) throw new Error(res.statusText);
+			return res.text();
+		})
+		.then((res) => {
+			let rooms = JSON.parse(res);
+			delete rooms.room_1;
+			rooms = Object.values(rooms);
+			for (let i=0; i<rooms.length ;i++) {
+				console.log(rooms[i].roomId, rooms[i].clients.length);
+				appendRoomList("room-list", i, rooms[i].roomId, rooms[i].clients.length);
+			}
+		})
+		.catch((e) => {
+			console.log(e);
+		});
+
+		//append room list
+		function appendRoomList(tagId, id, roomId, num) {
+			const div = document.createElement("div");
+			div.id = "item" + id;
+			div.className = "room-list-item list-group-item";
+			const divRoomId = document.createElement("div");
+			divRoomId.className = "roomId";
+			const divPlayerNum = document.createElement("div");
+			divPlayerNum.className = "client-num";
+			const iIcon = document.createElement("i");
+			iIcon.className = "fas fa-user-friends";
+			const roomIdText = document.createTextNode(roomId);
+			const playNumText = document.createTextNode(" " + num + " / " + "∞");
+
+			divRoomId.appendChild(roomIdText);
+			divPlayerNum.appendChild(iIcon);
+			divPlayerNum.appendChild(playNumText);
+
+			div.appendChild(divRoomId);
+			div.appendChild(divPlayerNum);
+
+			document.getElementById(tagId).appendChild(div);
+
+			div.addEventListener("click", () => {
+				console.log(id, roomIdText, `${cst.host}/test-board`);
+				const playerId = document.getElementById("playerId").value;
+				document.cookie = `playerId=${playerId}`;
+				document.cookie = `roomId=${roomId}`;
+				window.location.href = `${cst.host}/test-board`;
+			});
+		}
+
+
+	</script>
 </html>
