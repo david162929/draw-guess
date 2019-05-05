@@ -69,7 +69,23 @@ function drawSocket (io) {
             if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
                 socket.to(roomId).emit("enter-draw", posX, posY, lastPosX, lastPosY);
             }
-        });	
+        });
+
+        socket.on("change-color", (color) => {
+            const roomId = clients[socket.id].room;
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                draw.in(roomId).emit("change-color", color);
+            }
+        });
+
+        socket.on("change-line-width", (width) => {
+            const roomId = clients[socket.id].room;
+            //驗證使用者與狀態
+            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                draw.in(roomId).emit("change-line-width", width);
+            }
+        });
 
         //join room
         socket.on("join-room", (lastRoomId, roomId) => {

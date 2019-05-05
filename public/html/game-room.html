@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="stylesheet" href="static/css/style.css">
 		<link rel="stylesheet" href="static/css/game-room.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 		<style>
 			
 		</style>
@@ -41,6 +42,16 @@
 				<canvas id="cvs" width="500" height="380"></canvas>
 				<div id="outer-timer">
 					<div id="timer" class="draw-timer-end"></div>
+				</div>
+				<div class="tool-bar">
+					<div id="color-set">
+
+					</div>
+					<div>
+						<input id="color-picker" type="color" onchange="pickColor();">
+						<div id="eraser"><i class="fas fa-eraser"></i></div>
+						<!-- <div id="clear-all">Clear all</div> -->
+					</div>
 				</div>
 			</div>
 			
@@ -135,6 +146,54 @@
 			draw.emit("join-room", lastRoomId, roomId);
 		}, 1000);
 
+
+		//動態 append color set
+		(function () {
+			const color = [
+				"#000000",
+				"#FFFFFF",
+				"#D3D3D3",
+				"#808080",
+				"#800000",
+				"#FF0000",
+				"#FF8C00",
+				"#FFD700",
+				"#00FF00",
+				"#228B22",
+				"#0000CD",
+				"#00BFFF",
+				"#FFC0CB",
+				"#EE82EE",
+				"#8A2BE2",
+				"#8B4513",
+				"#800080",
+				"#8FBC8F"
+			];
+			for (let i=0; i<color.length ;i++) {
+				const div = document.createElement("div");
+				div.className = `square color${i}`;
+				div.style = `background-color:${color[i]};`;
+				document.getElementById("color-set").appendChild(div);
+				div.addEventListener("click", () => {
+					draw.emit("change-color", color[i]);
+					draw.emit("change-line-width", 2);
+				});
+			}
+		})();
+
+		//自訂顏色
+		function pickColor () {
+			draw.emit("change-color", document.getElementById("color-picker").value);
+			draw.emit("change-line-width", 2);
+		}
+
+		//橡皮擦
+		document.getElementById("eraser").addEventListener("click", () => {
+			draw.emit("change-color", "#ffffff");
+			draw.emit("change-line-width", 10);
+		});
+
+		//清除全部
 
 	</script>
 

@@ -27,13 +27,14 @@
 
 /* ---- Canvas ---- */
 #cvs {
-    border: 1px solid #000;	
+    /* border: 1px solid #000;	 */
     display: block;
-    margin: 20px auto;
+    margin: 20px auto 0 auto;
     background-color: #fff;
     border-radius: 10px;
     cursor: crosshair;		
 }
+
 
 /* ---- Ranking List ---- */
 #ranking-list {
@@ -59,7 +60,7 @@
 
 /* ---- Chat Box ---- */
 .chatBox {
-    border: 1px solid #000;
+    /* border: 1px solid #000; */
     width: 200px;
     height: 500px;
     margin: 20px 0 20px 30px;
@@ -69,14 +70,16 @@
 }
 #chat-content {
     padding-bottom: 5px;
-    border-bottom: 1px solid #000;
+    /* border-bottom: 1px solid #000; */
     height: 90%;
     overflow: auto;
+    word-break: break-all;
 }
 #chat-input {
     width: 100%;
     margin: 0px auto;
     padding-left: 8px;
+    border-radius: 8px;
 }
 .chat-user {
     /* font-size: 18pt; */
@@ -103,7 +106,8 @@
     height: 10px;
     border: 1px solid silver;
     position: relative;
-    margin: 5px auto 5px auto;
+    margin: 15px auto 15px auto;
+    border-radius: 5px;
 }
 /* .draw-timer-start {
     width: 450px;
@@ -155,6 +159,7 @@
     position: relative;
     background-color: papayawhip;
     margin-left: 0;
+    border-radius: 4px;
     z-index: 1;
     animation: drawCountdown 49s linear;
 }
@@ -164,6 +169,7 @@
     position: relative;
     background-color: lightgray;
     margin-left: 0;
+    border-radius: 4px;
     z-index: 1;
     animation: middleCountdown 5s linear;
 }
@@ -184,4 +190,43 @@
     100% {
         width:0px;
     }
+}
+
+/* ---- Tool Bar ---- */
+.tool-bar {
+    width: 500px;
+    height: 80px;
+    background-color: navy;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#color-set {
+    width: 30%;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-right: 30px;
+}
+.square {
+	width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    margin: 2px 2px;
+    cursor: pointer;
+}
+#color-picker {
+    cursor: pointer;
+}
+#eraser {
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+}
+#clear-all {
+    height: 25px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
 }

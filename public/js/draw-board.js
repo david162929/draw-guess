@@ -5,8 +5,21 @@ cvs = document.getElementById("cvs");         //抓 CanvasElement
 ctx = cvs.getContext("2d");                   //抓 canvas 的 2d 繪圖(Context 物件)
 
 /* ----- 繪畫動作 ----- */
+//初始化
 let posX, posY, lastPosX = "init", lastPosY = "init";
 let clickStatus = 0;
+ctx.lineWidth = 2;
+ctx.lineCap = "round";
+ctx.lineJoin = "round";
+
+/* ----- 繪圖工具列 ----- */
+function changeDrawColor(rgb) {
+    ctx.strokeStyle = rgb;
+    ctx.fillStyle = rgb;
+}
+function changeLineWidth(value) {
+    ctx.lineWidth = value;
+}
 
 
 //畫布事件
@@ -32,7 +45,7 @@ cvs.addEventListener("mousemove", () => {
         changePosition();
         if (clickStatus === 1) {
             //開畫
-            ctx.lineWidth = 2;			//改粗細
+            // ctx.lineWidth = 2;			//改粗細
             ctx.beginPath();
             ctx.moveTo(lastPosX, lastPosY);
             ctx.lineTo(posX, posY);
@@ -52,7 +65,7 @@ cvs.addEventListener("mouseleave", () => {
             changePosition();
     
             //開畫
-            ctx.lineWidth = 2;			//改粗細
+            // ctx.lineWidth = 2;			//改粗細
             ctx.beginPath();
             ctx.moveTo(lastPosX, lastPosY);
             ctx.lineTo(posX, posY);
@@ -73,7 +86,7 @@ cvs.addEventListener("mouseenter", () => {
             changePosition();
     
             //開畫
-            ctx.lineWidth = 2;			//改粗細
+            // ctx.lineWidth = 2;			//改粗細
             ctx.beginPath();
             ctx.moveTo(lastPosX, lastPosY);
             ctx.lineTo(posX, posY);
@@ -125,7 +138,7 @@ draw.on("down-draw", (rposX, rposY) => {
 });
 
 draw.on("move-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
-    ctx.lineWidth = 2;			//改粗細
+    // ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
     ctx.lineTo(rposX, rposY);
@@ -134,7 +147,7 @@ draw.on("move-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
 });
 
 draw.on("leave-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
-    ctx.lineWidth = 2;			//改粗細
+    // ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
     ctx.lineTo(rposX, rposY);
@@ -143,13 +156,23 @@ draw.on("leave-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
 });
 
 draw.on("enter-draw", (rposX, rposY, rlastPosX, rlastPosY) => {
-    ctx.lineWidth = 2;			//改粗細
+    // ctx.lineWidth = 2;			//改粗細
     ctx.beginPath();
     ctx.moveTo(rlastPosX, rlastPosY);
     ctx.lineTo(rposX, rposY);
     ctx.closePath();
     ctx.stroke();
 });
+
+draw.on("change-color", (color) => {
+    changeDrawColor(color);
+});
+
+draw.on("change-line-width", (width) => {
+    changeLineWidth(width);
+});
+
+
 
 /* ----- 清空畫布 ----- */
 draw.on("clearBoard", () => {
