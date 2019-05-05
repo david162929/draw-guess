@@ -188,6 +188,9 @@ draw.on("wait-next-turn", (gStatus, userName, topic) => {
     newTimer.className = "middle-timer";
     document.getElementById("outer-timer").appendChild(newTimer);
 
+    //初始化
+    initDrawStyle();
+
     if (gStatus === "no-one-hit") {
         printAnswer("hehe 都沒猜對", userName, topic);
     }
@@ -198,4 +201,38 @@ draw.on("wait-next-turn", (gStatus, userName, topic) => {
         printAnswer("公布答案~", userName, topic);
     }
     console.log("wait-next-turn");
+});
+
+draw.on("provide-timer-process", (id) => {
+    const width = document.getElementById("timer").offsetWidth;
+    const color = getComputedStyle(document.getElementById("timer")).backgroundColor;
+    console.log("provide-timer-process");
+    draw.emit("return-timer-process", id, width, color);
+
+    //const style = getComputedStyle(document.getElementById("timer"));
+});
+
+draw.on("update-timer-process", (width, color) => {
+    console.log("update-timer-process");
+    document.getElementById("timer").style = width;
+    document.getElementById("timer").style.backgroundColor = color;
+});
+draw.on("freeze-only", () => {
+    gameStatus = "freeze";
+    console.log("freeze-only");
+});
+
+draw.on("provide-draw-status", (id) => {
+    const style = {
+        strokeStyle: ctx.strokeStyle,
+        fillStyle: ctx.fillStyle,
+        lineWidth: ctx.lineWidth
+    };
+    draw.emit("return-draw-status", id, style);
+});
+draw.on("update-draw-status", (style) => {
+    console.log("update-draw-status");
+    console.log(style)
+    changeDrawColor(style.strokeStyle);
+    changeLineWidth(style.lineWidth);
 });

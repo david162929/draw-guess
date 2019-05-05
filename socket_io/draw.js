@@ -44,46 +44,58 @@ function drawSocket (io) {
         });
         
         socket.on("down-draw", (roomId, posX, posY) => {
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                socket.to(roomId).emit("down-draw", posX, posY);
+            if(rooms[roomId]) {
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    socket.to(roomId).emit("down-draw", posX, posY);
+                }
             }
         });
         
         socket.on("move-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                socket.to(roomId).emit("move-draw", posX, posY, lastPosX, lastPosY);
+            if(rooms[roomId]) {
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    socket.to(roomId).emit("move-draw", posX, posY, lastPosX, lastPosY);
+                }
             }
         });
         
         socket.on("leave-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                socket.to(roomId).emit("leave-draw", posX, posY, lastPosX, lastPosY);
+            if(rooms[roomId]) {
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    socket.to(roomId).emit("leave-draw", posX, posY, lastPosX, lastPosY);
+                }
             }
         });
         
         socket.on("enter-draw", (roomId, posX, posY, lastPosX, lastPosY) => {
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                socket.to(roomId).emit("enter-draw", posX, posY, lastPosX, lastPosY);
+            if(rooms[roomId]) {
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    socket.to(roomId).emit("enter-draw", posX, posY, lastPosX, lastPosY);
+                }
             }
         });
 
         socket.on("change-color", (color) => {
-            const roomId = clients[socket.id].room;
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                draw.in(roomId).emit("change-color", color);
+            if(clients[socket.id]) {
+                const roomId = clients[socket.id].room;
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    draw.in(roomId).emit("change-color", color);
+                }
             }
         });
 
         socket.on("change-line-width", (width) => {
-            const roomId = clients[socket.id].room;
-            //驗證使用者與狀態
-            if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
-                draw.in(roomId).emit("change-line-width", width);
+            if(clients[socket.id]) {
+                const roomId = clients[socket.id].room;
+                //驗證使用者與狀態
+                if (socket.id === rooms[roomId].gameDetail.currentDraw && rooms[roomId].gameDetail.gameStatus === "start") {
+                    draw.in(roomId).emit("change-line-width", width);
+                }
             }
         });
 
@@ -201,6 +213,7 @@ function drawSocket (io) {
 
                 }, drawTime);
                 console.log(timerId);
+
                 //console.log(x.drawTimerId);
                 //console.log(test.drawTimerId);
                 //console.log("開始計時drawTimerId: "+ Object.keys(rooms[roomId].gameDetail.drawTimerId));
@@ -254,8 +267,8 @@ function drawSocket (io) {
                         //進入到間隔 phase
                         rooms[roomId].gameDetail.gameStatus = "all-correct";
                         draw.in(roomId).emit("wait-next-turn", rooms[roomId].gameDetail.gameStatus, rooms[roomId].rankingList[rankingIndex2].userId, topic[itemNum]);
-                        console.log("取消計時器drawTimerId: "+ rooms[roomId].gameDetail.drawTimerId);
-                        clearTimeout(rooms[roomId].gameDetail.drawTimerId);        //清掉繪圖計時
+                        //console.log("取消計時器drawTimerId: "+ rooms[roomId].gameDetail.drawTimerId);
+                        clearTimeout(timerId[roomId]);        //清掉繪圖計時
 
                         middlePhaseTimer(draw, rooms, roomId, middlePhaseTime);
                     }
@@ -272,10 +285,32 @@ function drawSocket (io) {
 
        //中途加入遊戲
         socket.on("join-after-game-start", () => {
+            console.log("join-after-game-start");
+            let roomId = clients[socket.id].room;
+
             socket.emit("clearBoard");		//該玩家清空畫面
-            socket.emit("freeze");			//該玩家凍結
+            // socket.emit("freeze");			//該玩家凍結
             //socket.emit("updateCurrentUser");
+
+            socket.emit("freeze-only");     //該玩家只凍結
+            //跟 currentUser 要 timer 倒數進程
+            console.log(rooms[roomId].clients[0]);
+            draw.to(rooms[roomId].clients[0]).emit("provide-timer-process", socket.id);
+            //跟 currentUser 要 canvas draw 的狀態
+            draw.to(rooms[roomId].clients[0]).emit("provide-draw-status", socket.id);
+
         });
+
+        socket.on("return-timer-process", (id, width, color) => {
+            console.log("return-timer-process");
+            draw.to(id).emit("update-timer-process", width, color);
+        });
+
+        socket.on("return-draw-status", (id, style) => {
+            console.log("return-draw-status");
+            draw.to(id).emit("update-draw-status", style);
+        });
+
 
         socket.on("disconnect", () => {
             //console.log(Object.keys(socket));

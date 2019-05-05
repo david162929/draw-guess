@@ -8,9 +8,14 @@ ctx = cvs.getContext("2d");                   //抓 canvas 的 2d 繪圖(Context
 //初始化
 let posX, posY, lastPosX = "init", lastPosY = "init";
 let clickStatus = 0;
-ctx.lineWidth = 2;
-ctx.lineCap = "round";
-ctx.lineJoin = "round";
+function initDrawStyle () {
+    ctx.strokeStyle = "#000000";
+    ctx.fillStyle = "#000000";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+}
+initDrawStyle();
 
 /* ----- 繪圖工具列 ----- */
 function changeDrawColor(rgb) {
