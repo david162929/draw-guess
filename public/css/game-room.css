@@ -32,7 +32,8 @@
     margin: 20px auto 0 auto;
     background-color: #fff;
     border-radius: 10px;
-    cursor: crosshair;		
+    cursor: crosshair;
+    box-shadow: 2px 2px 10px black;	
 }
 
 
@@ -44,6 +45,7 @@
     padding: 5px 10px;
     background-color: #fff;
     border-radius: 10px;
+    box-shadow: 2px 2px 10px black;
     overflow: auto;
 }
 .ranking-user-id {
@@ -67,6 +69,7 @@
     background-color: #fff;
     border-radius: 10px;
     padding: 10px 15px;
+    box-shadow: 2px 2px 10px black;
 }
 #chat-content {
     padding-bottom: 5px;
