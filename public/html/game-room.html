@@ -44,13 +44,17 @@
 					<div id="timer" class="draw-timer-end"></div>
 				</div>
 				<div class="tool-bar">
-					<div id="color-set">
+					<div id="color-set" class="">
 
 					</div>
-					<div>
+					<div class="div2">
 						<input id="color-picker" type="color" onchange="pickColor();">
 						<div id="eraser"><i class="fas fa-eraser"></i></div>
 						<!-- <div id="clear-all">Clear all</div> -->
+					</div>
+					<div class="">
+						<label><i class="fas fa-pencil-alt"></i></label>
+						<input id="line-width-bar" type="range" name="points" min="1" max="10" value="2">
 					</div>
 				</div>
 			</div>
@@ -195,6 +199,11 @@
 
 		//清除全部
 
+
+		//畫筆粗細
+		document.getElementById("line-width-bar").addEventListener("change", () => {
+			draw.emit("change-line-width", document.getElementById("line-width-bar").value);
+		});
 	</script>
 
 </html>

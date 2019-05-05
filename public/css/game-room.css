@@ -212,6 +212,9 @@
     flex-wrap: wrap;
     margin-right: 30px;
 }
+.div2 {
+    margin-right: 30px;
+}
 .square {
 	width: 18px;
     height: 18px;
@@ -233,3 +236,7 @@
     text-align: center;
     cursor: pointer;
 }
+.fa-pencil-alt {
+    color: #fff;
+}
+
