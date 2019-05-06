@@ -54,6 +54,7 @@ class ClientDetail {
 const clients = {};
 
 const topic = ["蘋果", "香蕉", "鳳梨", "芭樂", "草莓", "椰子", "檸檬", "柳橙", "柚子", "荔枝", "葡萄"];
+const topic2 = ["鋼琴", "相機", "床", "枕頭", "檯燈", "吊扇", "投影機", "滑鼠", "長椅", "毛巾", "拖鞋", "洋裝", "襯衫", "蓮蓬頭", "花瓶", "雨傘", "燈泡", "牙刷", "馬桶"];
 
 const timerId = {};
 
@@ -65,6 +66,6 @@ module.exports = {
     rooms: rooms,
     ClientDetail: ClientDetail,
     clients: clients,
-	topic: topic,
+	topic: topic2,
 	timerId: timerId
 };
