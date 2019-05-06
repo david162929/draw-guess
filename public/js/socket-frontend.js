@@ -53,7 +53,7 @@ draw.on("room-owner-status", (roomOwnerResult) => {
     if (roomOwner === true) {
         const button = document.createElement("button");
         button.id = "game-start-button";
-        const buttonText = document.createTextNode("遊戲開始");
+        const buttonText = document.createTextNode("Game start");
         button.appendChild(buttonText);
         document.getElementById("game-start").appendChild(button);
 
@@ -93,7 +93,7 @@ draw.on("game-run", (topic) => {
 
     //view topic when draw
     const h3 = document.createElement("h3");
-    const text = document.createTextNode("題目: ");
+    const text = document.createTextNode("Topic : ");
     h3.appendChild(text);
     const span = document.createElement("span");
     const topicText = document.createTextNode(topic);
@@ -192,13 +192,13 @@ draw.on("wait-next-turn", (gStatus, userName, topic) => {
     initDrawStyle();
 
     if (gStatus === "no-one-hit") {
-        printAnswer("hehe 都沒猜對", userName, topic);
+        printAnswer("Nobody hit the answer.", userName, topic);
     }
     else if (gStatus === "all-correct") {
-        printAnswer("所有人都猜到了", userName, topic);
+        printAnswer("Everybody hit the answer!", userName, topic);
     }
     else if (gStatus === "part-correct") {
-        printAnswer("公布答案~", userName, topic);
+        printAnswer("Time's up!", userName, topic);
     }
     console.log("wait-next-turn");
 });

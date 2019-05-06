@@ -28,7 +28,7 @@
 			<button id="joinRoom" onclick="joinRoom();">Go</button>
 		</div>
 
-		<h3 class="info">當前回合玩家： <span id="userCurrentTurn">等待中</span></h3>
+		<h3 class="info">Turn： <span id="userCurrentTurn">Waiting</span></h3>
 		
 		<div id="topic" class="info"></div>
 		<div id="game-start" class="info"></div>
@@ -66,7 +66,7 @@
 					</div>
 					<div id="send-content">
 						<form id="chat-form">
-							<input type="text" name="msg" id="chat-input" placeholder="猜猜看這是什麼 ?" autocomplete="off">
+							<input type="text" name="msg" id="chat-input" placeholder="Answer here." autocomplete="off">
 						</form>
 					</div>
 				</div>
@@ -180,7 +180,7 @@
 				document.getElementById("color-set").appendChild(div);
 				div.addEventListener("click", () => {
 					draw.emit("change-color", color[i]);
-					draw.emit("change-line-width", 2);
+					draw.emit("change-line-width", document.getElementById("line-width-bar").value);
 				});
 			}
 		})();
@@ -188,13 +188,13 @@
 		//自訂顏色
 		function pickColor () {
 			draw.emit("change-color", document.getElementById("color-picker").value);
-			draw.emit("change-line-width", 2);
+			draw.emit("change-line-width", document.getElementById("line-width-bar").value);
 		}
 
 		//橡皮擦
 		document.getElementById("eraser").addEventListener("click", () => {
 			draw.emit("change-color", "#ffffff");
-			draw.emit("change-line-width", 10);
+			draw.emit("change-line-width", 20);
 		});
 
 		//清除全部

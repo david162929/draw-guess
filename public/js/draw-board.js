@@ -227,5 +227,5 @@ function statusImg (sentence, userId, word) {
     ctx.clearRect(0, 0, cvs.width, cvs.height);         //清空畫面
 
     ctx.fillText(sentence, cvs.width/2, cvs.height/2 - 20);
-    ctx.fillText(`${userId} 畫的是： ${word}`, cvs.width/2, cvs.height/2 + 10);
+    ctx.fillText(`${userId} drew： ${word}`, cvs.width/2, cvs.height/2 + 10);
 }

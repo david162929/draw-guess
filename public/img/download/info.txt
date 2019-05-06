@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+
+font name: Decalotype-Black
+font link: https://hanken.co/product/decalotype/
+font author: Hanken Design Co.
+font author site: https://hanken.co/
+
+icon designer: Lemon Liu
+icon designer link: /lemonliu
+        
+{"bg":"#E3D559","icon":"#48A9DC","font":"#ffffff"}
+      
