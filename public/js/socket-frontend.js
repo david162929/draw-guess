@@ -214,8 +214,13 @@ draw.on("provide-timer-process", (id) => {
 
 draw.on("update-timer-process", (width, color) => {
     console.log("update-timer-process");
-    document.getElementById("timer").style = width;
-    document.getElementById("timer").style.backgroundColor = color;
+
+    //中途加入的 timer 資訊更新
+    const time = (width/450*50000)-100;
+    document.getElementById("timer").style = `width: ${width}px; height: 8px; position: relative; background-color: ${color}; border-radius: 4px; z-index: 1;`;
+    setTimeout(() => {
+        document.getElementById("timer").style = `width: 0px; height: 8px; position: relative; background-color: lightcoral; border-radius: 4px; z-index: 1; margin-left: 0; transition-property: width, background-color; transition-duration:${time}ms; transition-timing-function: linear;`;
+    }, 100);
 });
 draw.on("freeze-only", () => {
     gameStatus = "freeze";
@@ -232,7 +237,6 @@ draw.on("provide-draw-status", (id) => {
 });
 draw.on("update-draw-status", (style) => {
     console.log("update-draw-status");
-    console.log(style)
     changeDrawColor(style.strokeStyle);
     changeLineWidth(style.lineWidth);
 });
