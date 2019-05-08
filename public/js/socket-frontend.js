@@ -14,10 +14,10 @@ socket.on("disconnect", () => {
     console.log("disconnected.");
 });
 
-socket.on("online",(num) => {
+socket.on("online", (num) => {
     document.getElementById("onlineCount").innerHTML = num;
-    
-    //後進者要求當前畫布內容
+
+    // 後進者要求當前畫布內容
     if (document.getElementById("onlineCount").innerHTML > 1) {
         console.log("fresh");
         draw.emit("reqDataURL");
@@ -47,7 +47,7 @@ draw.on("leave-succeed", (roomUserNum) => {
 });
 
 draw.on("room-owner-status", (roomOwnerResult) => {
-    //設定是否為創房者的狀態
+    // 設定是否為創房者的狀態
     roomOwner = roomOwnerResult;
     console.log("roomOwner = " + roomOwner);
     if (roomOwner === true) {
@@ -57,7 +57,7 @@ draw.on("room-owner-status", (roomOwnerResult) => {
         button.appendChild(buttonText);
         document.getElementById("game-start").appendChild(button);
 
-        //add event to start
+        // add event to start
         const startButton = document.getElementById("game-start-button");
         startButton.addEventListener("click", () => {
             gameStatus = "start";
@@ -68,7 +68,7 @@ draw.on("room-owner-status", (roomOwnerResult) => {
 });
 
 draw.on("toGetUpdateDataURL", () => {
-    //後進者要求當前畫布內容
+    // 後進者要求當前畫布內容
     if (true) {
         console.log("fresh");
         draw.emit("reqDataURL", roomId);
@@ -79,9 +79,9 @@ draw.on("freeze", () => {
     gameStatus = "freeze";
     console.log("freeze");
 
-    //啟動圖像 timer
+    // 啟動圖像 timer
     document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
-    let newTimer = document.createElement("div");
+    const newTimer = document.createElement("div");
     newTimer.id = "timer";
     newTimer.className = "draw-timer";
     document.getElementById("outer-timer").appendChild(newTimer);
@@ -91,19 +91,19 @@ draw.on("game-run", (topic) => {
     gameStatus = "draw";
     console.log("runnnnn");
 
-    //view topic when draw
+    // view topic when draw
     const h3 = document.createElement("h3");
     const text = document.createTextNode("Topic : ");
     h3.appendChild(text);
     const span = document.createElement("span");
     const topicText = document.createTextNode(topic);
     span.appendChild(topicText);
-    h3.appendChild(span); 
+    h3.appendChild(span);
     document.getElementById("topic").appendChild(h3);
 
-    //啟動圖像 timer
+    // 啟動圖像 timer
     document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
-    let newTimer = document.createElement("div");
+    const newTimer = document.createElement("div");
     newTimer.id = "timer";
     newTimer.className = "draw-timer";
     document.getElementById("outer-timer").appendChild(newTimer);
@@ -122,7 +122,7 @@ draw.on("game-run", (topic) => {
 draw.on("next-turn", () => {
     console.log("next-turn");
     const topic = document.getElementById("topic");
-    if (topic.childNodes[0]) {      //存在才移除
+    if (topic.childNodes[0]) { // 存在才移除
         topic.removeChild(topic.childNodes[0]);
     }
 });
@@ -150,21 +150,26 @@ draw.on("send-user-id", (userId) => {
 draw.on("rankingList-update", (rankingList) => {
     console.log(rankingList);
 
-    let ranking = document.getElementById("ranking-list");
-    //remove all child node
-    let num = ranking.childNodes.length;        //不能省
-    for (let i=0; i<num ;i++) {
+    const ranking = document.getElementById("ranking-list");
+    // remove all child node
+    const num = ranking.childNodes.length; // 不能省
+    for (let i=0; i<num; i++) {
         ranking.removeChild(ranking.firstChild);
     }
 
-    //append child
-    for (let i=0; i<rankingList.length ;i++) {
+    // append child
+    for (let i=0; i<rankingList.length; i++) {
         appendList("ranking-list", rankingList[i].userId, rankingList[i].score);
     }
-    
 });
 
-function appendList (tagId, userId, score) {
+/**
+ * 產生排行榜
+ * @param {string} tagId 要 append 上去的目標 element tag
+ * @param {string} userId 使用者名稱
+ * @param {number} score 分數
+ */
+function appendList(tagId, userId, score) {
     const div = document.createElement("div");
     const spanUserId = document.createElement("span");
     spanUserId.className = "ranking-user-id";
@@ -181,23 +186,21 @@ function appendList (tagId, userId, score) {
 }
 
 draw.on("wait-next-turn", (gStatus, userName, topic) => {
-    //啟動圖像 timer
+    // 啟動圖像 timer
     document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
-    let newTimer = document.createElement("div");
+    const newTimer = document.createElement("div");
     newTimer.id = "timer";
     newTimer.className = "middle-timer";
     document.getElementById("outer-timer").appendChild(newTimer);
 
-    //初始化
+    // 初始化
     initDrawStyle();
 
     if (gStatus === "no-one-hit") {
         printAnswer("Nobody hit the answer.", userName, topic);
-    }
-    else if (gStatus === "all-correct") {
+    } else if (gStatus === "all-correct") {
         printAnswer("Everybody hit the answer!", userName, topic);
-    }
-    else if (gStatus === "part-correct") {
+    } else if (gStatus === "part-correct") {
         printAnswer("Time's up!", userName, topic);
     }
     console.log("wait-next-turn");
@@ -209,13 +212,13 @@ draw.on("provide-timer-process", (id) => {
     console.log("provide-timer-process");
     draw.emit("return-timer-process", id, width, color);
 
-    //const style = getComputedStyle(document.getElementById("timer"));
+    // const style = getComputedStyle(document.getElementById("timer"));
 });
 
 draw.on("update-timer-process", (width, color) => {
     console.log("update-timer-process");
 
-    //中途加入的 timer 資訊更新
+    // 中途加入的 timer 資訊更新
     const time = (width/450*50000)-100;
     document.getElementById("timer").style = `width: ${width}px; height: 8px; position: relative; background-color: ${color}; border-radius: 4px; z-index: 1;`;
     setTimeout(() => {
