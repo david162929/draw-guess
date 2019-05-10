@@ -18,6 +18,9 @@
         "quotes": ["error", "double"],
         "indent": ["error", 4],
         "max-len": ["error", { "code": 200 }],
-        "comma-dangle": ["error", "never"]
+        "comma-dangle": ["error", "never"],
+        "no-undef": "error",
+        "no-global-assign": "error",
+        "no-unused-vars": ["error", { "vars": "local" }]
     }
 }

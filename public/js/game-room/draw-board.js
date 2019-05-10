@@ -1,3 +1,4 @@
+/* global gameStatus draw roomId */
 const cvs = document.getElementById("cvs"); // 抓 CanvasElement
 const ctx = cvs.getContext("2d"); // 抓 canvas 的 2d 繪圖(Context 物件)
 

@@ -1,3 +1,4 @@
+/* global io appendRoomList */
 const draw = io.connect("/draw");
 
 draw.on("connect", () => {

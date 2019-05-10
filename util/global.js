@@ -38,6 +38,7 @@ class GameDetail {
     }
 }
 
+
 /**
  * 得分
  */

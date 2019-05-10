@@ -1,3 +1,5 @@
+/* global io appendMessage initDrawStyle printAnswer ctx changeDrawColor changeLineWidth */
+
 const socket = io();
 const draw = io.connect("/draw");
 
@@ -80,12 +82,19 @@ draw.on("freeze", () => {
     console.log("freeze");
 
     // 啟動圖像 timer
+    activeTimer();
+});
+
+/**
+ * 啟動圖像 timer
+ */
+function activeTimer() {
     document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
     const newTimer = document.createElement("div");
     newTimer.id = "timer";
     newTimer.className = "draw-timer";
     document.getElementById("outer-timer").appendChild(newTimer);
-});
+}
 
 draw.on("game-run", (topic) => {
     gameStatus = "draw";
@@ -102,20 +111,7 @@ draw.on("game-run", (topic) => {
     document.getElementById("topic").appendChild(h3);
 
     // 啟動圖像 timer
-    document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
-    const newTimer = document.createElement("div");
-    newTimer.id = "timer";
-    newTimer.className = "draw-timer";
-    document.getElementById("outer-timer").appendChild(newTimer);
-
-/*     document.getElementById("timer").className = "draw-timer-start";
-
-    window.requestAnimationFrame(() => {
-        document.getElementById("timer").className = "draw-timer-end";
-    }); */
-    // setTimeout(() => {
-    //     document.getElementById("timer").className = "draw-timer-end";
-    // }, 10);
+    activeTimer();
 });
 
 
@@ -187,11 +183,7 @@ function appendList(tagId, userId, score) {
 
 draw.on("wait-next-turn", (gStatus, userName, topic) => {
     // 啟動圖像 timer
-    document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
-    const newTimer = document.createElement("div");
-    newTimer.id = "timer";
-    newTimer.className = "middle-timer";
-    document.getElementById("outer-timer").appendChild(newTimer);
+    activeTimer();
 
     // 初始化
     initDrawStyle();
@@ -222,7 +214,16 @@ draw.on("update-timer-process", (width, color) => {
     const time = (width/450*50000)-100;
     document.getElementById("timer").style = `width: ${width}px; height: 8px; position: relative; background-color: ${color}; border-radius: 4px; z-index: 1;`;
     setTimeout(() => {
-        document.getElementById("timer").style = `width: 0px; height: 8px; position: relative; background-color: lightcoral; border-radius: 4px; z-index: 1; margin-left: 0; transition-property: width, background-color; transition-duration:${time}ms; transition-timing-function: linear;`;
+        document.getElementById("timer").style =
+        `width: 0px; height: 8px;
+        position: relative;
+        background-color: lightcoral;
+        border-radius: 4px;
+        z-index: 1;
+        margin-left: 0;
+        transition-property: width, background-color;
+        transition-duration:${time}ms;
+        transition-timing-function: linear;`;
     }, 100);
 });
 draw.on("freeze-only", () => {

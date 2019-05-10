@@ -10,6 +10,8 @@ const app = express();
 // create TCP connection to MySQL over SSH by using mysql2 and ssh2 module
 let sql;// can't use const
 
+const credMysql = require("./../.credentials/mysql.js");
+const credEc2 = require("./../.credentials/ec2.js");
 const ssh = new Client();
 ssh.on("ready", function() {
     ssh.forwardOut(
@@ -21,9 +23,9 @@ ssh.on("ready", function() {
             if (err) throw err;
             // Create the connection pool. The pool-specific settings are the defaults
             /* pool = mysql.createPool({
-                user: 'root',
-                database: 'stylish',
-                password: 'daviddata1357',
+                user: credMysql.user,
+                database: credMysql.database,
+                password: credMysql.password,
                 stream: stream,
                 waitForConnections: true,
                 connectionLimit: 100,
@@ -31,9 +33,9 @@ ssh.on("ready", function() {
             }); */
 
             sql = mysql.createConnection({
-                user: "root",
-                database: "stylish",
-                password: "daviddata1357",
+                user: credMysql.user,
+                database: credMysql.database,
+                password: credMysql.password,
                 stream: stream // <--- this is the important part
             });
 
@@ -45,10 +47,10 @@ ssh.on("ready", function() {
         });
 }).connect({
     // ssh connection config ...
-    host: "52.15.89.192",
+    host: credEc2.host,
     port: 22,
-    username: "ec2-user",
-    privateKey: require("fs").readFileSync("./../.ssh/2019-4-3-keyPair.pem")
+    username: credEc2.username,
+    privateKey: credEc2.privateKey
 });
 
 // use bodyParser and cookieParser

@@ -85,3 +85,6 @@ typings/
 
 # .ssh directories
 .ssh/
+
+# .credentials directories
+.credentials/
