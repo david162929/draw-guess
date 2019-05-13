@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 
 // create TCP connection to MySQL over SSH by using mysql2 and ssh2 module
-let sql;// can't use const
+let pool;// can't use const
 
 const credMysql = require("./../.credentials/mysql.js");
 const credEc2 = require("./../.credentials/ec2.js");
@@ -22,25 +22,25 @@ ssh.on("ready", function() {
         function(err, stream) {
             if (err) throw err;
             // Create the connection pool. The pool-specific settings are the defaults
-            /* pool = mysql.createPool({
+            pool = mysql.createPool({
                 user: credMysql.user,
                 database: credMysql.database,
                 password: credMysql.password,
                 stream: stream,
                 waitForConnections: true,
-                connectionLimit: 100,
+                connectionLimit: 20,
                 queueLimit: 0
-            }); */
+            });
 
-            sql = mysql.createConnection({
+            /* sql = mysql.createConnection({
                 user: credMysql.user,
                 database: credMysql.database,
                 password: credMysql.password,
                 stream: stream // <--- this is the important part
-            });
+            }); */
 
             // use sql connection as usual
-            sql.query("SELECT id FROM product", function(err, result, fields) {
+            pool.query("SELECT id FROM product", function(err, result, fields) {
                 if (err) throw err;
                 console.log("Connect to MySQL succeed!");
             });
@@ -90,7 +90,7 @@ mainSocket(io);
 
 // for draw-board
 const drawSocket = require("./socket_io/draw.js");
-drawSocket(io);
+drawSocket(io, pool);
 
 
 // require routes

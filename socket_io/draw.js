@@ -12,8 +12,9 @@ const timerId = globalCst.timerId;
 /**
  * 繪畫遊戲相關 socket 的連線，namespace 為 "/draw"
  * @param {Object} io 掛在 http server 上的 socket.io
+ * @param {Object} pool mysql 連線相關物件
  */
-function drawSocket(io) {
+function drawSocket(io, pool) {
     const drawTime = 50000;
     const middlePhaseTime = 5000;
 
