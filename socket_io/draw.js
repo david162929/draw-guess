@@ -1,4 +1,5 @@
 const globalCst = require("../util/global.js");
+const guestAlias = globalCst.guestAlias;
 const rooms = globalCst.rooms;
 const topic = globalCst.topic;
 // const GameDetail = globalCst.GameDetail;
@@ -24,6 +25,9 @@ function drawSocket(io, pool) {
 
         // change user id
         socket.on("change-user-id", (userName) => {
+            if (userName === "" || userName === undefined) {
+                userName = guestAlias();
+            }
             clients[socket.id].userId = userName;
             socket.emit("send-user-id", clients[socket.id].userId); // 送出別名
         });
@@ -391,10 +395,6 @@ function middlePhaseTimer(draw, rooms, roomId, time) {
         }
     }, time);
 }
-
-// function timerRun (socket, io, roomId) {
-//     io.in(roomId).emit("time-out");
-// }
 
 
 module.exports = drawSocket;

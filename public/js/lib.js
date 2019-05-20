@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 
-const cst = {
-    host: "http://localhost:4000"
-};
-
 /* const cst = {
-    host: "https://davidadm.com"
+    host: "http://localhost:4000"
 }; */
+
+const cst = {
+    host: "https://davidadm.com"
+};
 
 
 /* ----- index 頁面 ----- */

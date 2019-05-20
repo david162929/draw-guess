@@ -22,7 +22,7 @@ socket.on("online", (num) => {
     // 後進者要求當前畫布內容
     if (document.getElementById("onlineCount").innerHTML > 1) {
         console.log("fresh");
-        draw.emit("reqDataURL");
+        draw.emit("reqDataURL", roomId);
     }
 });
 
