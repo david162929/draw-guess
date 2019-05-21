@@ -11,6 +11,7 @@ Godoodle 是一個多人即時的繪畫互動遊戲平台，透過 Node.js 建�
 - 藉由繪圖與對話聊天室進行遊戲互動
 - 支援玩家中途加入遊戲
 - 限時回合制
+- Server-side 進行遊戲機制與邏輯處理，Client-side 進行繪圖處理，防止 Client-side 的 hack
 
 ## 開始使用
 ### 創建遊戲房
