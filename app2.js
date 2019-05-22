@@ -85,8 +85,6 @@ mainSocket(io);
     }
 } */
 
-// let clients=[];
-
 
 // for draw-board
 const drawSocket = require("./socket_io/draw.js");
