@@ -51,7 +51,7 @@ class GameDetail {
 ```
 ### Ranking
 | Field    | Type   | Description                        |
-| -------- | ------ | ---------------------------------- |
+| :--------: | :------: | :---------------------------------- |
 | socketId | String | 使用者 `socket.id`                 |
 | score    | Number | 目前累積得分 |
 | userId   | String | 使用者 ID                          |
@@ -74,7 +74,7 @@ class Ranking {
 ```
 ### RoomDetail
 | Field      | Type   | Description |
-| ---------- | ------ | ----------- |
+| :----------: | :------: | :----------- |
 | roomId     | String | 遊戲房間 ID |
 | clients    | Array | 加入房間的所有玩家 `socket.id` |
 | gameDetail | Object | GameDetail 物件 |
@@ -98,7 +98,7 @@ class RoomDetail {
 ```
 ### ClientDetail
 | Field      | Type   | Description |
-| ---------- | ------ | ----------- |
+| :----------: | :------: | :----------- |
 | socketId     | String | 該使用者的 `socket.id` |
 | room    | String | 該使用者所在的房間 |
 | userId | String | 使用者 ID，如果沒輸入，則自動生成一個訪客 ID |

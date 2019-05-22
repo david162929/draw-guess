@@ -82,17 +82,18 @@ draw.on("freeze", () => {
     console.log("freeze");
 
     // 啟動圖像 timer
-    activeTimer();
+    activeTimer("draw-timer");
 });
 
 /**
  * 啟動圖像 timer
+ * @param {string} classN 要變的 class 的名稱
  */
-function activeTimer() {
+function activeTimer(classN) {
     document.getElementById("outer-timer").removeChild(document.getElementById("timer"));
     const newTimer = document.createElement("div");
     newTimer.id = "timer";
-    newTimer.className = "draw-timer";
+    newTimer.className = classN;
     document.getElementById("outer-timer").appendChild(newTimer);
 }
 
@@ -111,7 +112,7 @@ draw.on("game-run", (topic) => {
     document.getElementById("topic").appendChild(h3);
 
     // 啟動圖像 timer
-    activeTimer();
+    activeTimer("draw-timer");
 });
 
 
@@ -183,7 +184,7 @@ function appendList(tagId, userId, score) {
 
 draw.on("wait-next-turn", (gStatus, userName, topic) => {
     // 啟動圖像 timer
-    activeTimer();
+    activeTimer("middle-timer");
 
     // 初始化
     initDrawStyle();
