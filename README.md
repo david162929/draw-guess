@@ -18,12 +18,16 @@ Godoodle 是一個多人即時的繪畫互動遊戲平台，透過 Node.js 建�
 ### 創建遊戲房
 進入 [https://davidadm.com](https://davidadm.com) 首頁，左側 `PLAYER INFO` 輸入任意玩家名稱與任意的房間名稱，點選 Play 即可創建遊戲房。
 
+![加入房間與聊天 GIF](chat.gif)
+
 ### 加入遊戲房
 首頁右側 `JOIN ROOM` 會出現當前已存的遊戲房間，可點選該遊戲房直接加入，或是在左側 `PLAYER INFO` 輸入 Room name 並點選 Play 來加入該房間。
 
 ### 開始遊戲
 第一位創建房間的玩家可以等待所有玩家進房後，點擊 `Game start` 開始遊戲，遊戲開始後會在上方出現本回合題目，該回合玩家需要在畫布上畫出題目，供其他玩家猜測。
 右側為聊天室，其他玩家在聊天室當中輸入本回合猜測的答案，若答對就會得分，答錯仍然可繼續猜測，越快猜對分數越高。
+
+![遊戲 GIF](draw.gif)
 
 ## Game Object
 ### GameDetail
