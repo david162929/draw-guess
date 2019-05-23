@@ -12,7 +12,7 @@ Godoodle 是一個多人即時的繪畫互動遊戲平台，透過 Node.js 建�
 - 支援玩家中途加入遊戲
 - 限時回合制
 - Server-side 進行遊戲機制與邏輯處理，Client-side 進行繪圖處理，防止 Client-side 的 hack
-- Event-driven
+- Event-driven programming
 
 ## 開始使用
 ### 創建遊戲房
@@ -188,6 +188,88 @@ class ClientDetail {
   - [change-line-width](doc/socket_event_doc.md#change-line-width)
 
 ## Socket Event Detail
-詳細請參閱 [socket_event_doc.md](doc/socket_event_doc.md)
+詳情請參閱 [socket_event_doc.md](doc/socket_event_doc.md)
 
 ## Unit Test 測試 Socket.IO
+### 導入 module
+```javascript
+const expect = require("chai").expect;
+const http = require("http");
+const ioS = require("socket.io");
+const ioC = require("socket.io-client");
+const drawSocket = require("./../socket_io/draw.js");
+```
+
+### 建立測試用 Server
+```javascript
+/**
+ * 建立 server 端
+ * @return {Promise} 回傳成功連線訊息提示
+ */
+function createServer() {
+    return new Promise((reso, rej) => {
+        try {
+            drawSocket(ioServer);
+            reso("創建 socket server 成功!");
+        } catch (err) {
+            rej(err);
+        }
+    });
+}
+```
+### 建立測試用 Client
+```javascript
+/**
+ * 建立 client 端
+ * @return {Promise} 回傳成功連線的 socket client 端
+ */
+function createClient() {
+    return new Promise((reso, rej) => {
+        try {
+            const socket = ioC.connect(`${host}:${port}${namespace}`, {
+                "reconnection delay": 0,
+                "reopen delay": 0,
+                "force new connection": true,
+                "transports": ["websocket"]
+            });
+            socket.on("connect", () => {
+                reso(socket);
+            });
+        } catch (err) {
+            rej(err);
+        }
+    });
+}
+```
+### 測試三個 Client 連上 Server 的情況
+```javascript
+/**
+ * 創建 http server 與 掛上 socket.io server side
+ */
+before((done) => {
+    console.log(">>> 創建 socket server...");
+    httpServer = http.Server().listen(port);
+    ioServer = ioS(httpServer);
+
+    createServer().then((res) => {
+        console.log(res);
+        console.log(">>> 建立 socket.io client 端...");
+
+        client1 = createClient();
+        client2 = createClient();
+        client3 = createClient();
+
+        Promise.all([client1, client2, client3]).then((array) => {
+            client1 = array[0];
+            client2 = array[1];
+            client3 = array[2];
+            console.log("建立 socket.io client 端成功!");
+            done();
+        }).catch((e) => {
+            console.log(e);
+        });
+    }).catch((e) => {
+        console.log(e);
+    });
+});
+```

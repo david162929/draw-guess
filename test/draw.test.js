@@ -28,7 +28,7 @@ const namespace = "/draw";
 
 
 /**
- * 建立 server 端(已包裹 Promise)
+ * 建立 server 端
  * @return {Promise} 回傳成功連線訊息提示
  */
 function createServer() {
@@ -43,7 +43,7 @@ function createServer() {
 }
 
 /**
- * 建立 client 端(已包裹 Promise)
+ * 建立 client 端
  * @return {Promise} 回傳成功連線的 socket client 端
  */
 function createClient() {
