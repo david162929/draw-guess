@@ -21,7 +21,6 @@ function drawSocket(io, pool) {
 
     const draw = io.of("/draw");
     draw.on("connection", (socket) => {
-        console.log("2019.5.22");
         console.log(Date().toString());
         console.log("draw connected.");
 

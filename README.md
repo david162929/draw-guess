@@ -133,28 +133,28 @@ class ClientDetail {
 
 ### Client-side Socket Event 列表
 - #### 整體遊戲功能
-  - [update-index-room-list](#update-index-room-list)
-  - online
-  - join-succeed
-  - send-chat-message
-  - hit-correct-message
-  - leave-succeed
-  - room-owner-status
-  - toGetUpdateDataURL
-  - freeze
-  - game-run
-  - next-turn
-  - your-turn
-  - updateCurrentUser
-  - send-gameStatus
-  - send-user-id
-  - rankingList-update
-  - wait-next-turn
-  - provide-timer-process
-  - update-timer-process
-  - freeze-only
-  - provide-draw-status
-  - update-draw-status
+  - [update-index-room-list](doc/socket_event_doc.md#update-index-room-list)
+  - [online](doc/socket_event_doc.md#online)
+  - [join-succeed](doc/socket_event_doc.md#join-succeed)
+  - [send-chat-message](doc/socket_event_doc.md#send-chat-message)
+  - [hit-correct-message](doc/socket_event_doc.md#hit-correct-message)
+  - [leave-succeed](doc/socket_event_doc.md#leave-succeed)
+  - [room-owner-status](doc/socket_event_doc.md#room-owner-status)
+  - [toGetUpdateDataURL](doc/socket_event_doc.md#toGetUpdateDataURL)
+  - [freeze](doc/socket_event_doc.md#freeze)
+  - [game-run](doc/socket_event_doc.md#game-run)
+  - [next-turn](doc/socket_event_doc.md#next-turn)
+  - [your-turn](doc/socket_event_doc.md#your-turn)
+  - [updateCurrentUser](doc/socket_event_doc.md#updateCurrentUser)
+  - [send-gameStatus](doc/socket_event_doc.md#send-gameStatus)
+  - [send-user-id](doc/socket_event_doc.md#send-user-id)
+  - [rankingList-update](doc/socket_event_doc.md#rankingList-update)
+  - [wait-next-turn](doc/socket_event_doc.md#wait-next-turn)
+  - [provide-timer-process](doc/socket_event_doc.md#provide-timer-process)
+  - [update-timer-process](doc/socket_event_doc.md#update-timer-process)
+  - [freeze-only](doc/socket_event_doc.md#freeze-only)
+  - [provide-draw-status](doc/socket_event_doc.md#provide-draw-status)
+  - [update-draw-status](doc/socket_event_doc.md#update-draw-status)
 - #### 繪圖功能
   - reqDataURL
   - resDataURL
@@ -168,146 +168,26 @@ class ClientDetail {
 
 ### Server-side Socket Event 列表
 - #### 整體遊戲功能
-  - connection
-  - change-user-id
-  - join-room
-  - send-chat-message
-  - game-start
-  - send-answer-message
-  - join-after-game-start
-  - disconnect
+  - [change-user-id](doc/socket_event_doc.md#change-user-id)
+  - [join-room](doc/socket_event_doc.md#join-room)
+  - [send-chat-message](doc/socket_event_doc.md#send-chat-message)
+  - [game-start](doc/socket_event_doc.md#game-start)
+  - [send-answer-message](doc/socket_event_doc.md#send-answer-message)
+  - [join-after-game-start](doc/socket_event_doc.md#join-after-game-start)
+  - [return-timer-process](doc/socket_event_doc.md#return-timer-process)
+  - [return-draw-status](doc/socket_event_doc.md#return-draw-status)
+  - [disconnect](doc/socket_event_doc.md#disconnect)
 - #### 繪圖功能
-  - reqDataURL
-  - resDataURL
-  - down-draw
-  - move-draw
-  - leave-draw
-  - enter-draw
-  - change-color
-  - change-line-width
+  - [reqDataURL](doc/socket_event_doc.md#reqDataURL)
+  - [resDataURL](doc/socket_event_doc.md#resDataURL)
+  - [down-draw](doc/socket_event_doc.md#down-draw)
+  - [move-draw](doc/socket_event_doc.md#move-draw)
+  - [leave-draw](doc/socket_event_doc.md#leave-draw)
+  - [enter-draw](doc/socket_event_doc.md#enter-draw)
+  - [change-color](doc/socket_event_doc.md#change-color)
+  - [change-line-width](doc/socket_event_doc.md#change-line-width)
 
 ## Socket Event Detail
-### Client-side
-
-#### update-index-room-list
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| rooms | Object | Server 端的總房間資訊 |
-
-- 動作：
-  將傳入的總房間物件進行處理，取出所有現存房間的 ID 與使用者人數，更新到前端。
-
-#### online
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| num | Number | 當前在線人數 |
-
-- 動作：
-  取得當前在線總人數，執行初始化，發送 `reqDataURL` 事件。
-
-#### join-succeed
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| roomUserNum | Number | 當前房間在線人數 |
-
-- 動作：
-  有玩家加入，更新當前房間在線總人數。
-
-#### send-chat-message
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| userName | String | 使用者 ID |
-| msg | String | 猜對通知 |
-
-- 動作：
-  收到猜對玩家的猜對通知，顯示到前端。
-
-#### hit-correct-message
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| userName | String | 使用者 ID |
-| msg | String | 該名使用者發送的聊天室訊息 |
-
-- 動作：
-  收到其他使用者發送的訊息，顯示到前端。
-
-#### leave-succeed
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| roomUserNum | Number | 當前房間在線人數 |
-
-- 動作：
-  有玩家離開，更新當前房間在線總人數。
-
-#### room-owner-status
-- Parameters：
-
-| Field |  Type  | Description           |
-| :---: | :----: | :-------------------- |
-| roomOwnerResult | Boolean | 是否為創房者 |
-
-- 動作：
-  如果是創房者，前端創造 Game start 按鈕
-
-#### toGetUpdateDataURL
-#### freeze
-#### game-run
-#### next-turn
-#### your-turn
-#### updateCurrentUser
-#### send-gameStatus
-#### send-user-id
-#### rankingList-update
-#### wait-next-turn
-#### provide-timer-process
-#### update-timer-process
-#### freeze-only
-#### provide-draw-status
-#### update-draw-status
-
-
-#### reqDataURL
-#### resDataURL
-#### down-draw
-#### move-draw
-#### leave-draw
-#### enter-draw
-#### change-color
-#### change-line-width
-#### clearBoard
-
-
-### Server-side
-
-
-#### connection
-#### change-user-id
-#### join-room
-#### send-chat-message
-#### game-start
-#### send-answer-message
-#### join-after-game-start
-#### disconnect
-
-#### reqDataURL
-#### resDataURL
-#### down-draw
-#### move-draw
-#### leave-draw
-#### enter-draw
-#### change-color
-#### change-line-width
+詳細請參閱 [socket_event_doc.md](doc/socket_event_doc.md)
 
 ## Unit Test 測試 Socket.IO
